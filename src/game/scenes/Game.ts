@@ -2,6 +2,7 @@ import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import { Character } from "../objects/Character";
 import { agentKeys } from "@/constants";
+import { Script } from "@/types";
 
 export class Game extends Scene {
   mapLayer: Phaser.Tilemaps.TilemapLayer;
@@ -97,6 +98,10 @@ export class Game extends Scene {
       }, 10_000);
       EventBus.emit("seed-picked", this);
     });
+  }
+
+  setTodaysScript(script: Script) {
+    console.log("Today's script is", script);
   }
 
   update(time: number, delta: number) {
