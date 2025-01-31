@@ -126,6 +126,7 @@ export class Game extends Scene {
     const talkerAgent = this.agents[talker];
     const listenerAgent = this.agents[listener];
     talkerAgent.setDestination({ x: listenerAgent.x, y: listenerAgent.y });
+    talkerAgent.createSpeechBubble(talkerAgent.x, talkerAgent.y, message);
   }
 
   update(time: number, delta: number) {
