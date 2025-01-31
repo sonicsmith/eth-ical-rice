@@ -22,7 +22,7 @@ export const Ui = ({
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "space-around",
           paddingTop: 8,
           paddingBottom: 8,
         }}
@@ -30,37 +30,28 @@ export const Ui = ({
         <div
           style={{
             display: "flex",
-            justifyContent: "space-around",
-            width: "50%",
+            flexDirection: "column",
+            justifyContent: "space-between",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button disabled={wheatSeeds === 0}>Plant Wheat</Button>
-            <Button disabled={tomatoSeeds === 0}>Plant Tomato</Button>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button disabled={riceSeeds === 0}>Plant Rice</Button>
-            <Button disabled={riceSupply === 0}>Donate Rice</Button>
-          </div>
+          <Button disabled={wheatSeeds === 0}>Plant Wheat</Button>
+          <Button disabled={tomatoSeeds === 0}>Plant Tomato</Button>
         </div>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            width: "50%",
+          }}
+        >
+          <Button disabled={riceSeeds === 0}>Plant Rice</Button>
+          <Button disabled={riceSupply === 0}>Donate Rice</Button>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <div>Wheat Seeds: {wheatSeeds}</div>
