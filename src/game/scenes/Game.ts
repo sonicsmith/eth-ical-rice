@@ -55,16 +55,14 @@ export class Game extends Scene {
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
 
     // Agents
-    // const agentBoundsPadding = 100;
-    // const agentBoundsX = mapLayer.width - agentBoundsPadding * 2;
-    // const agentBoundsY = mapLayer.height - agentBoundsPadding * 2;
+    const agentBoundsPadding = 100;
+    const agentBoundsX = mapLayer.width - agentBoundsPadding * 2;
+    const agentBoundsY = mapLayer.height - agentBoundsPadding * 2;
     agentKeys.forEach((key, index) => {
       const agent = new Character({
         scene: this,
-        // x: Math.random() * agentBoundsX + agentBoundsPadding,
-        // y: Math.random() * agentBoundsY + agentBoundsPadding,
-        x: mapLayer.width / 2 + (index + 1) * 100,
-        y: mapLayer.height / 2,
+        x: Math.random() * agentBoundsX + agentBoundsPadding,
+        y: Math.random() * agentBoundsY + agentBoundsPadding,
         key,
       });
       agent.play(`${key}-idle-down-anim`);
