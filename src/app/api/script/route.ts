@@ -1,5 +1,6 @@
 import { Script } from "@/types";
 import { NextResponse } from "next/server";
+import { generateScript } from "./generateScript";
 
 export const GET = async () => {
   const script: Script = {
@@ -19,6 +20,10 @@ export const GET = async () => {
     amount: 3,
     foodType: "wheat",
   };
+
+  const aiScript = await generateScript();
+
+  console.log(aiScript);
 
   return NextResponse.json(script);
 };
