@@ -125,7 +125,7 @@ export class Game extends Scene {
     const { talker, listener, message } = instructions;
     const talkerAgent = this.agents[talker];
     const listenerAgent = this.agents[listener];
-    talkerAgent.talkTo(listenerAgent, message);
+    talkerAgent.talkTo(listenerAgent, message, this.updateAgents.bind(this));
   }
 
   update(time: number, delta: number) {

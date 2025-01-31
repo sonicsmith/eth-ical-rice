@@ -44,7 +44,12 @@ export class Character extends Phaser.GameObjects.Sprite {
       this.destinationCallback = callback;
     }
   }
-  createSpeechBubble(x: number, y: number, quote: string) {
+  createSpeechBubble(
+    x: number,
+    y: number,
+    quote: string,
+    onComplete: () => void
+  ) {
     const width = 200;
     const bubblePadding = 10;
 
@@ -105,8 +110,14 @@ export class Character extends Phaser.GameObjects.Sprite {
 
     content.setDepth(10);
     bubble.setDepth(9);
+
+    setTimeout(() => {
+      bubble.destroy();
+      content.destroy();
+      onComplete();
+    }, 10_000);
   }
-  talkTo(listenerAgent: Character, message: string) {
+  talkTo(listenerAgent: Character, message: string, onComplete: () => void) {
     const dx = listenerAgent.x - this.x;
     const dy = listenerAgent.y - this.y;
 
@@ -126,7 +137,7 @@ export class Character extends Phaser.GameObjects.Sprite {
 
     const callback = () => {
       this.anims.play(`${this.key}-idle-${direction}-anim`, true);
-      this.createSpeechBubble(x, y, message);
+      this.createSpeechBubble(x, y, message, onComplete);
     };
     this.setDestination({ x, y }, callback);
   }
