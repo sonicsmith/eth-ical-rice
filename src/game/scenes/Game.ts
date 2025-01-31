@@ -10,7 +10,9 @@ export class Game extends Scene {
   seedCount = {
     wheat: 0,
     tomato: 0,
+    rice: 0,
   };
+  riceSupply = 0;
 
   constructor() {
     super("Game");

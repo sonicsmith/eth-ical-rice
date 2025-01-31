@@ -8,6 +8,7 @@ import {
 import StartGame from "./main";
 import { EventBus } from "./EventBus";
 import { Game } from "./scenes/Game";
+import { Ui } from "./components/Ui";
 
 export interface IRefPhaserGame {
   game: Phaser.Game | null;
@@ -25,6 +26,8 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
     const [uiValues, setUiValues] = useState({
       wheatSeeds: 0,
       tomatoSeeds: 0,
+      riceSeeds: 0,
+      riceSupply: 0,
     });
 
     useLayoutEffect(() => {
@@ -71,6 +74,8 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
         setUiValues({
           wheatSeeds: scene.seedCount.wheat,
           tomatoSeeds: scene.seedCount.tomato,
+          riceSeeds: scene.seedCount.rice,
+          riceSupply: scene.riceSupply,
         });
       });
       return () => {
@@ -81,16 +86,12 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
     return (
       <div style={{ width: "100%", maxWidth: 800 }}>
         <div id="game-container" />
-        <div
-          style={{
-            background: "#555",
-            color: "white",
-            padding: 8,
-          }}
-        >
-          <div>Wheat Seeds: {uiValues.wheatSeeds}</div>
-          <div>Tomato Seeds: {uiValues.tomatoSeeds}</div>
-        </div>
+        <Ui
+          wheatSeeds={uiValues.wheatSeeds}
+          tomatoSeeds={uiValues.tomatoSeeds}
+          riceSeeds={uiValues.riceSeeds}
+          riceSupply={uiValues.riceSupply}
+        />
       </div>
     );
   }
