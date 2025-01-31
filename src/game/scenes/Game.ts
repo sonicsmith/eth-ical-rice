@@ -7,6 +7,10 @@ export class Game extends Scene {
   mapLayer: Phaser.Tilemaps.TilemapLayer;
   player: Character;
   agents: Record<string, Character> = {};
+  seedCount = {
+    wheat: 0,
+    tomato: 0,
+  };
 
   constructor() {
     super("Game");
@@ -38,6 +42,7 @@ export class Game extends Scene {
       y: mapLayer.height / 2,
       key: "player",
     });
+    this.physics.add.existing(player);
     this.player = player;
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
 
@@ -56,6 +61,11 @@ export class Game extends Scene {
       this.agents[key] = agent;
     });
 
+    // Seeds
+    for (let i = 0; i < 5; i++) {
+      this.createSeed();
+    }
+
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       console.log("pointerdown", pointer);
       const x = pointer.worldX;
@@ -66,8 +76,24 @@ export class Game extends Scene {
     EventBus.emit("current-scene-ready", this);
   }
 
-  changeScene() {
-    this.scene.start("GameOver");
+  createSeed() {
+    const type = Math.random() > 0.5 ? "wheat" : "tomato";
+    const seed = this.add.sprite(
+      Math.random() * this.mapLayer.width,
+      Math.random() * this.mapLayer.height,
+      "plants",
+      type === "wheat" ? 0 : 6
+    );
+    this.physics.add.existing(seed);
+
+    this.physics.add.collider(seed, this.player, () => {
+      console.log("Seed picked up", type);
+      this.seedCount[type]++;
+      seed.destroy();
+      setTimeout(() => {
+        this.createSeed();
+      }, 10_000);
+    });
   }
 
   update(time: number, delta: number) {

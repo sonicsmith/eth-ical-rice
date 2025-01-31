@@ -33,6 +33,11 @@ export class Preloader extends Scene {
         frameHeight: 64,
       });
     });
+
+    this.load.spritesheet("plants", "plants.png", {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
   }
 
   create() {

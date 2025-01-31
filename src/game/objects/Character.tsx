@@ -9,6 +9,7 @@ export class Character extends Phaser.GameObjects.Sprite {
   constructor(config: any) {
     super(config.scene, config.x, config.y, config.key);
     this.key = config.key;
+    this.setDepth(5);
     config.scene.add.existing(this);
     // Animations
     directions.forEach((direction, index) => {
