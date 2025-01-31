@@ -1,86 +1,97 @@
-import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
-import StartGame from './main';
-import { EventBus } from './EventBus';
+import {
+  forwardRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import StartGame from "./main";
+import { EventBus } from "./EventBus";
+import { Game } from "./scenes/Game";
 
-export interface IRefPhaserGame
-{
-    game: Phaser.Game | null;
-    scene: Phaser.Scene | null;
+export interface IRefPhaserGame {
+  game: Phaser.Game | null;
+  scene: Phaser.Scene | null;
 }
 
-interface IProps
-{
-    currentActiveScene?: (scene_instance: Phaser.Scene) => void
+interface IProps {
+  currentActiveScene?: (scene_instance: Phaser.Scene) => void;
 }
 
-export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(function PhaserGame({ currentActiveScene }, ref)
-{
+export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
+  function PhaserGame({ currentActiveScene }, ref) {
     const game = useRef<Phaser.Game | null>(null!);
 
-    useLayoutEffect(() =>
-    {
-        if (game.current === null)
-        {
+    const [uiValues, setUiValues] = useState({
+      wheatSeeds: 0,
+      tomatoSeeds: 0,
+    });
 
-            game.current = StartGame("game-container");
+    useLayoutEffect(() => {
+      if (game.current === null) {
+        game.current = StartGame("game-container");
 
-            if (typeof ref === 'function')
-            {
-                ref({ game: game.current, scene: null });
-            } else if (ref)
-            {
-                ref.current = { game: game.current, scene: null };
-            }
-
+        if (typeof ref === "function") {
+          ref({ game: game.current, scene: null });
+        } else if (ref) {
+          ref.current = { game: game.current, scene: null };
         }
+      }
 
-        return () =>
-        {
-            if (game.current)
-            {
-                game.current.destroy(true);
-                if (game.current !== null)
-                {
-                    game.current = null;
-                }
-            }
+      return () => {
+        if (game.current) {
+          game.current.destroy(true);
+          if (game.current !== null) {
+            game.current = null;
+          }
         }
+      };
     }, [ref]);
 
-    useEffect(() =>
-    {
-        EventBus.on('current-scene-ready', (scene_instance: Phaser.Scene) =>
-        {
-            if (currentActiveScene && typeof currentActiveScene === 'function')
-            {
-
-                currentActiveScene(scene_instance);
-
-            }
-
-            if (typeof ref === 'function')
-            {
-
-                ref({ game: game.current, scene: scene_instance });
-            
-            } else if (ref)
-            {
-
-                ref.current = { game: game.current, scene: scene_instance };
-
-            }
-            
-        });
-        return () =>
-        {
-
-            EventBus.removeListener('current-scene-ready');
-        
+    useEffect(() => {
+      EventBus.on("current-scene-ready", (scene_instance: Phaser.Scene) => {
+        if (currentActiveScene && typeof currentActiveScene === "function") {
+          currentActiveScene(scene_instance);
         }
+
+        if (typeof ref === "function") {
+          ref({ game: game.current, scene: scene_instance });
+        } else if (ref) {
+          ref.current = { game: game.current, scene: scene_instance };
+        }
+      });
+      return () => {
+        EventBus.removeListener("current-scene-ready");
+      };
     }, [currentActiveScene, ref]);
 
-    return (
-        <div id="game-container"></div>
-    );
+    // Listen for seed-picked event
+    useEffect(() => {
+      EventBus.on("seed-picked", (scene: Game) => {
+        setUiValues({
+          wheatSeeds: scene.seedCount.wheat,
+          tomatoSeeds: scene.seedCount.tomato,
+        });
+      });
+      return () => {
+        EventBus.removeListener("seed-picked");
+      };
+    }, [ref]);
 
-});
+    return (
+      <div style={{ width: "100%", maxWidth: 800 }}>
+        <div id="game-container" />
+        <div
+          style={{
+            background: "#555",
+            color: "white",
+            padding: 8,
+          }}
+        >
+          <div>Wheat Seeds: {uiValues.wheatSeeds}</div>
+          <div>Tomato Seeds: {uiValues.tomatoSeeds}</div>
+        </div>
+      </div>
+    );
+  }
+);

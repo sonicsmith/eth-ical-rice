@@ -93,6 +93,7 @@ export class Game extends Scene {
       setTimeout(() => {
         this.createSeed();
       }, 10_000);
+      EventBus.emit("seed-picked", this);
     });
   }
 
