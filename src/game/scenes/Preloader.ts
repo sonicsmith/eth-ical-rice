@@ -25,6 +25,11 @@ export class Preloader extends Scene {
 
     this.load.tilemapCSV("map", "tilemap.csv");
     this.load.image("tiles", "grass.png");
+
+    this.load.spritesheet("player", "player.png", {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
   }
 
   create() {

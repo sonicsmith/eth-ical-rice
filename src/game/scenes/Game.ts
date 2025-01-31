@@ -1,8 +1,10 @@
 import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
+import { Character } from "../objects/Character";
 
 export class Game extends Scene {
   mapLayer: Phaser.Tilemaps.TilemapLayer;
+  player: Character;
 
   constructor() {
     super("Game");
@@ -26,10 +28,30 @@ export class Game extends Scene {
     mapLayer.skipCull = true;
     this.mapLayer = mapLayer;
 
+    // Player
+    const player = new Character({
+      scene: this,
+      x: 300,
+      y: 350,
+      key: "player",
+    });
+    this.player = player;
+
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      console.log("pointerdown", pointer);
+      const x = pointer.worldX;
+      const y = pointer.worldY;
+      this.player.setDestination({ x, y });
+    });
+
     EventBus.emit("current-scene-ready", this);
   }
 
   changeScene() {
     this.scene.start("GameOver");
+  }
+
+  update(time: number, delta: number) {
+    this.player.update(delta);
   }
 }
