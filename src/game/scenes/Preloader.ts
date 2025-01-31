@@ -22,6 +22,9 @@ export class Preloader extends Scene {
   preload() {
     //  Load the assets for the game - Replace with your own assets
     this.load.setPath("assets");
+
+    this.load.tilemapCSV("map", "tilemap.csv");
+    this.load.image("tiles", "grass.png");
   }
 
   create() {
