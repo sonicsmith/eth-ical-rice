@@ -4,6 +4,7 @@ const directions = ["up", "left", "down", "right"];
 
 export class Character extends Phaser.GameObjects.Sprite {
   destination: { x: number; y: number } | null;
+  destinationCallback: (() => void) | null;
   key: string;
 
   constructor(config: any) {
@@ -39,6 +40,9 @@ export class Character extends Phaser.GameObjects.Sprite {
     this.destination = destination;
     const direction = getDirection(destination, { x: this.x, y: this.y });
     this.anims.play(`${this.key}-walk-${direction}-anim`, true);
+    if (callback) {
+      this.destinationCallback = callback;
+    }
   }
   createSpeechBubble(x: number, y: number, quote: string) {
     const width = 200;
@@ -102,6 +106,30 @@ export class Character extends Phaser.GameObjects.Sprite {
     content.setDepth(10);
     bubble.setDepth(9);
   }
+  talkTo(listenerAgent: Character, message: string) {
+    const dx = listenerAgent.x - this.x;
+    const dy = listenerAgent.y - this.y;
+
+    const TALKING_DISTANCE = Math.random() > 0.5 ? 50 : -50;
+    let x = listenerAgent.x - TALKING_DISTANCE;
+    let y = listenerAgent.y;
+
+    if (Math.abs(dx) <= TALKING_DISTANCE && Math.abs(dy) <= TALKING_DISTANCE) {
+      x = this.x;
+      y = this.y;
+    }
+
+    const direction = getDirection(
+      { x: listenerAgent.x, y: listenerAgent.y },
+      { x, y }
+    );
+
+    const callback = () => {
+      this.anims.play(`${this.key}-idle-${direction}-anim`, true);
+      this.createSpeechBubble(x, y, message);
+    };
+    this.setDestination({ x, y }, callback);
+  }
   update(delta: number): void {
     if (this.destination) {
       // Calculate the direction vector
@@ -115,6 +143,10 @@ export class Character extends Phaser.GameObjects.Sprite {
         // If the sprite is close enough to the target, stop moving
         this.destination = null;
         this.anims.play(`${this.key}-idle-down-anim`, true);
+        if (this.destinationCallback) {
+          this.destinationCallback();
+          this.destinationCallback = null;
+        }
       } else {
         // Normalize the direction vector and update the sprite position
         const velocityX = (dx / distance) * 100 * (delta / 1000);
