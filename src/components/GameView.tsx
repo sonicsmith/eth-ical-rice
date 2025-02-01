@@ -13,6 +13,13 @@ export const GameView = () => {
   const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
   const [isGiveModalOpen, setIsGiveModalOpen] = useState(false);
 
+  const [uiValues, setUiValues] = useState({
+    wheatSeeds: 0,
+    tomatoSeeds: 0,
+    riceSeeds: 0,
+    riceSupply: 0,
+  });
+
   // Run on start
   const currentScene = (scene: Phaser.Scene) => {
     // Get today's script
@@ -34,9 +41,19 @@ export const GameView = () => {
       console.log("Agent selected", agent);
       setIsGiveModalOpen(true);
     });
+    // Listen for seed-picked
+    EventBus.on("seed-picked", (scene: Game) => {
+      setUiValues({
+        wheatSeeds: scene.seedCount.wheat,
+        tomatoSeeds: scene.seedCount.tomato,
+        riceSeeds: scene.seedCount.rice,
+        riceSupply: scene.riceSupply,
+      });
+    });
     return () => {
       EventBus.removeListener("farm-plot-selected");
       EventBus.removeListener("agent-selected");
+      EventBus.removeListener("seed-picked");
     };
   };
 
@@ -44,7 +61,9 @@ export const GameView = () => {
     <div className="flex justify-center">
       <PlantModal isOpen={isPlantModalOpen} setIsOpen={setIsPlantModalOpen} />
       <GiveModal isOpen={isGiveModalOpen} setIsOpen={setIsGiveModalOpen} />
-      <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
+      <div className="border-4 border-black rounded-xl">
+        <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
+      </div>
     </div>
   );
 };
