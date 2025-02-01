@@ -8,7 +8,6 @@ import {
 import StartGame from "./main";
 import { EventBus } from "./EventBus";
 import { Game } from "./scenes/Game";
-import { Ui } from "./components/Ui";
 import { FarmPlot } from "./objects/FarmPlot";
 
 export interface IRefPhaserGame {
@@ -100,12 +99,23 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
     return (
       <div style={{ width: "100%", maxWidth: 800 }}>
         <div id="game-container" />
-        <Ui
-          wheatSeeds={uiValues.wheatSeeds}
-          tomatoSeeds={uiValues.tomatoSeeds}
-          riceSeeds={uiValues.riceSeeds}
-          riceSupply={uiValues.riceSupply}
-        />
+        <div style={{ display: "flex" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              background: "#555",
+              color: "white",
+              padding: 16,
+              width: "100%",
+            }}
+          >
+            <div>Wheat Seeds: {uiValues.wheatSeeds}</div>
+            <div>Tomato Seeds: {uiValues.tomatoSeeds}</div>
+            <div>Rice Seeds: {uiValues.riceSeeds}</div>
+            <div>Rice Supply: {uiValues.riceSupply}</div>
+          </div>
+        </div>
       </div>
     );
   }
