@@ -83,19 +83,6 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
       };
     }, [ref]);
 
-    // List
-
-    // Listen for seed-picked event
-    useEffect(() => {
-      EventBus.on("farm-plot-selected", (scene: Game) => {
-        const farmPlot = scene?.selectedObject as FarmPlot;
-        console.log("Farm plot selected", farmPlot.index);
-      });
-      return () => {
-        EventBus.removeListener("farm-plot-selected");
-      };
-    }, [ref]);
-
     return (
       <div style={{ width: "100%", maxWidth: 800 }}>
         <div id="game-container" />
