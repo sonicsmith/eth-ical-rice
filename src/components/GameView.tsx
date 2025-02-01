@@ -59,7 +59,13 @@ export const GameView = () => {
 
   return (
     <div className="flex justify-center">
-      <PlantModal isOpen={isPlantModalOpen} setIsOpen={setIsPlantModalOpen} />
+      <PlantModal
+        isOpen={isPlantModalOpen}
+        setIsOpen={setIsPlantModalOpen}
+        wheatSeeds={uiValues.wheatSeeds}
+        tomatoSeeds={uiValues.tomatoSeeds}
+        riceSeeds={uiValues.riceSeeds}
+      />
       <GiveModal isOpen={isGiveModalOpen} setIsOpen={setIsGiveModalOpen} />
       <div className="border-4 border-black rounded-xl">
         <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />

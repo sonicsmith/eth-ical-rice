@@ -14,9 +14,15 @@ import {
 export const PlantModal = ({
   isOpen,
   setIsOpen,
+  wheatSeeds,
+  tomatoSeeds,
+  riceSeeds,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  wheatSeeds: number;
+  tomatoSeeds: number;
+  riceSeeds: number;
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -26,9 +32,9 @@ export const PlantModal = ({
           <DialogDescription>Choose what seed to plant</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
-          <Button>Wheat</Button>
-          <Button>Tomato</Button>
-          <Button>Rice</Button>
+          <Button disabled={wheatSeeds === 0}>Wheat</Button>
+          <Button disabled={tomatoSeeds === 0}>Tomato</Button>
+          <Button disabled={riceSeeds === 0}>Rice</Button>
         </div>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
