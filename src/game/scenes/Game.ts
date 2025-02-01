@@ -102,6 +102,11 @@ export class Game extends Scene {
           EventBus.emit("farm-plot-selected", this);
         }
 
+        if (this.selectedObject instanceof Character) {
+          console.log("Character clicked", this.selectedObject);
+          EventBus.emit("agent-selected", this);
+        }
+
         // Move Player
         console.log("pointerdown", pointer);
         const x = pointer.worldX;

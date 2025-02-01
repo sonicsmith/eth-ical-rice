@@ -12,6 +12,7 @@ export class Character extends Phaser.GameObjects.Sprite {
     this.key = config.key;
     this.setDepth(5);
     config.scene.add.existing(this);
+    this.setInteractive();
     // Animations
     directions.forEach((direction, index) => {
       // TODO: Fix sprite sheet to get correct idle
