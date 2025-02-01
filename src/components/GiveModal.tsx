@@ -11,27 +11,29 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
+import { getCapitalized } from "@/utils/getCapitalized";
 
 export const GiveModal = ({
   isOpen,
   setIsOpen,
   wheat,
   tomato,
-  rice,
+  playerName,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   wheat: number;
   tomato: number;
-  rice: number;
+  playerName: string | undefined;
 }) => {
+  const capitalizedName = getCapitalized(playerName || "");
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Give to player</DialogTitle>
+          <DialogTitle>Give to {capitalizedName}</DialogTitle>
           <DialogDescription>
-            Choose what to give to this player
+            Choose what to give to {capitalizedName}
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">

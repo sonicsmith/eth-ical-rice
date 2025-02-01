@@ -12,6 +12,10 @@ export const GameView = () => {
   const phaserRef = useRef<IRefPhaserGame | null>(null);
   const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
   const [isGiveModalOpen, setIsGiveModalOpen] = useState(false);
+  const [selectedFarmPlot, setSelectedFarmPlot] = useState<FarmPlot | null>(
+    null
+  );
+  const [selectedAgent, setSelectedAgent] = useState<Character | null>(null);
 
   const [gameState, setGameState] = useState({
     wheatSeeds: 0,
@@ -35,12 +39,14 @@ export const GameView = () => {
     EventBus.on("farm-plot-selected", (scene: Game) => {
       const farmPlot = scene?.selectedObject as FarmPlot;
       console.log("Farm plot selected", farmPlot.index);
+      setSelectedFarmPlot(farmPlot);
       setIsPlantModalOpen(true);
     });
     // Listen for agent-selected
     EventBus.on("agent-selected", (scene: Game) => {
       const agent = scene?.selectedObject as Character;
       console.log("Agent selected", agent);
+      setSelectedAgent(agent);
       setIsGiveModalOpen(true);
     });
     // Listen for seed-picked
@@ -75,7 +81,7 @@ export const GameView = () => {
         setIsOpen={setIsGiveModalOpen}
         wheat={gameState.wheat}
         tomato={gameState.tomato}
-        rice={gameState.rice}
+        playerName={selectedAgent?.key}
       />
       <div className="border-4 border-black rounded-xl">
         <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
