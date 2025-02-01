@@ -9,6 +9,7 @@ import StartGame from "./main";
 import { EventBus } from "./EventBus";
 import { Game } from "./scenes/Game";
 import { Ui } from "./components/Ui";
+import { FarmPlot } from "./objects/FarmPlot";
 
 export interface IRefPhaserGame {
   game: Phaser.Game | null;
@@ -80,6 +81,19 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
       });
       return () => {
         EventBus.removeListener("seed-picked");
+      };
+    }, [ref]);
+
+    // List
+
+    // Listen for seed-picked event
+    useEffect(() => {
+      EventBus.on("farm-plot-selected", (scene: Game) => {
+        const farmPlot = scene?.selectedObject as FarmPlot;
+        console.log("Farm plot selected", farmPlot.index);
+      });
+      return () => {
+        EventBus.removeListener("farm-plot-selected");
       };
     }, [ref]);
 

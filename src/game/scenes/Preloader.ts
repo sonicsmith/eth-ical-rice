@@ -38,6 +38,11 @@ export class Preloader extends Scene {
       frameWidth: 16,
       frameHeight: 16,
     });
+
+    this.load.spritesheet("dirt", "dirt.png", {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
   }
 
   create() {

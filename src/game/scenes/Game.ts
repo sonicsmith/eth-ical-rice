@@ -3,6 +3,7 @@ import { Scene } from "phaser";
 import { Character } from "../objects/Character";
 import { agentKeys } from "@/constants";
 import { AgentInstruction, Script } from "@/types";
+import { FarmPlot } from "../objects/FarmPlot";
 
 export class Game extends Scene {
   mapLayer: Phaser.Tilemaps.TilemapLayer;
@@ -19,6 +20,7 @@ export class Game extends Scene {
   personInNeed: string = "";
   foodNeeded: string = "";
   amountNeeded: number = 0;
+  selectedObject: Phaser.GameObjects.GameObject | null = null;
 
   constructor() {
     super("Game");
@@ -47,7 +49,7 @@ export class Game extends Scene {
     const player = new Character({
       scene: this,
       x: mapLayer.width / 2,
-      y: mapLayer.height / 2,
+      y: mapLayer.height / 2 - 100,
       key: "player",
     });
     this.physics.add.existing(player);
@@ -58,7 +60,7 @@ export class Game extends Scene {
     const agentBoundsPadding = 100;
     const agentBoundsX = mapLayer.width - agentBoundsPadding * 2;
     const agentBoundsY = mapLayer.height - agentBoundsPadding * 2;
-    agentKeys.forEach((key, index) => {
+    agentKeys.forEach((key) => {
       const agent = new Character({
         scene: this,
         x: Math.random() * agentBoundsX + agentBoundsPadding,
@@ -74,12 +76,39 @@ export class Game extends Scene {
       this.createSeed();
     }
 
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      console.log("pointerdown", pointer);
-      const x = pointer.worldX;
-      const y = pointer.worldY;
-      this.player.setDestination({ x, y });
-    });
+    // Farm
+    for (let x = 0; x < 3; x++) {
+      for (let y = 0; y < 3; y++) {
+        const farmPlot = new FarmPlot({
+          scene: this,
+          x: mapLayer.width / 2 + (x - 1.5) * 32,
+          y: mapLayer.height / 2 + (y - 1.5) * 32,
+        });
+        farmPlot.setIndex(x * y);
+        // this.farmPlots.push(farmPlot);
+      }
+    }
+
+    this.input.on(
+      "pointerdown",
+      (
+        pointer: Phaser.Input.Pointer,
+        objectsClicked: Phaser.GameObjects.GameObject[]
+      ) => {
+        this.selectedObject = objectsClicked[0] || null;
+
+        if (this.selectedObject instanceof FarmPlot) {
+          console.log("Farm plot clicked", this.selectedObject.index);
+          EventBus.emit("farm-plot-selected", this);
+        }
+
+        // Move Player
+        console.log("pointerdown", pointer);
+        const x = pointer.worldX;
+        const y = pointer.worldY;
+        this.player.setDestination({ x, y });
+      }
+    );
 
     EventBus.emit("current-scene-ready", this);
   }
