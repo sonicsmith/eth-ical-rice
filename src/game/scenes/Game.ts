@@ -14,7 +14,11 @@ export class Game extends Scene {
     tomato: 0,
     rice: 0,
   };
-  riceSupply = 0;
+  supplyCount = {
+    wheat: 0,
+    tomato: 0,
+    rice: 0,
+  };
   agentInstructions: AgentInstruction[] = [];
   agentInstructionsIndex: number = 0;
   personInNeed: string = "";
@@ -85,7 +89,6 @@ export class Game extends Scene {
           y: mapLayer.height / 2 + (y - 1.5) * 32,
         });
         farmPlot.setIndex(x * y);
-        // this.farmPlots.push(farmPlot);
       }
     }
 

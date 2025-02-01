@@ -13,11 +13,13 @@ export const GameView = () => {
   const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
   const [isGiveModalOpen, setIsGiveModalOpen] = useState(false);
 
-  const [uiValues, setUiValues] = useState({
+  const [gameState, setGameState] = useState({
     wheatSeeds: 0,
     tomatoSeeds: 0,
     riceSeeds: 0,
-    riceSupply: 0,
+    wheat: 0,
+    tomato: 0,
+    rice: 0,
   });
 
   // Run on start
@@ -43,11 +45,13 @@ export const GameView = () => {
     });
     // Listen for seed-picked
     EventBus.on("seed-picked", (scene: Game) => {
-      setUiValues({
+      setGameState({
         wheatSeeds: scene.seedCount.wheat,
         tomatoSeeds: scene.seedCount.tomato,
         riceSeeds: scene.seedCount.rice,
-        riceSupply: scene.riceSupply,
+        wheat: scene.supplyCount.wheat,
+        tomato: scene.supplyCount.tomato,
+        rice: scene.supplyCount.rice,
       });
     });
     return () => {
@@ -62,9 +66,9 @@ export const GameView = () => {
       <PlantModal
         isOpen={isPlantModalOpen}
         setIsOpen={setIsPlantModalOpen}
-        wheatSeeds={uiValues.wheatSeeds}
-        tomatoSeeds={uiValues.tomatoSeeds}
-        riceSeeds={uiValues.riceSeeds}
+        wheatSeeds={gameState.wheatSeeds}
+        tomatoSeeds={gameState.tomatoSeeds}
+        riceSeeds={gameState.riceSeeds}
       />
       <GiveModal isOpen={isGiveModalOpen} setIsOpen={setIsGiveModalOpen} />
       <div className="border-4 border-black rounded-xl">
