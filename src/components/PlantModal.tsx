@@ -23,18 +23,17 @@ export const PlantModal = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Plant Seed</DialogTitle>
-          <DialogDescription>
-            Anyone who has this link will be able to view this.
-          </DialogDescription>
+          <DialogDescription>Choose what seed to plant</DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2">
-          <div className="grid flex-1 gap-2"></div>
-          test
+        <div className="flex flex-col gap-2">
+          <Button>Wheat</Button>
+          <Button>Tomato</Button>
+          <Button>Rice</Button>
         </div>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Close
+              Cancel
             </Button>
           </DialogClose>
         </DialogFooter>
