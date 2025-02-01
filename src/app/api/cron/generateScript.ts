@@ -44,7 +44,6 @@ export const generateScript = async (): Promise<Script> => {
     let messageContent = "";
 
     if (i % 3 === 0) {
-      talker = getRandomCharacter();
       listener = getRandomCharacter(talker);
       lastMessage = "";
     }
