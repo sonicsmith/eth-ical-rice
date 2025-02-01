@@ -15,9 +15,15 @@ import { Input } from "./ui/input";
 export const GiveModal = ({
   isOpen,
   setIsOpen,
+  wheat,
+  tomato,
+  rice,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  wheat: number;
+  tomato: number;
+  rice: number;
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -29,8 +35,8 @@ export const GiveModal = ({
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
-          <Button>Wheat</Button>
-          <Button>Tomato</Button>
+          <Button disabled={wheat === 0}>Wheat</Button>
+          <Button disabled={tomato === 0}>Tomato</Button>
           <Input type="number" placeholder="Amount" />
         </div>
         <DialogFooter className="sm:justify-start">

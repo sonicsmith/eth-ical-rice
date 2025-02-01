@@ -70,7 +70,13 @@ export const GameView = () => {
         tomatoSeeds={gameState.tomatoSeeds}
         riceSeeds={gameState.riceSeeds}
       />
-      <GiveModal isOpen={isGiveModalOpen} setIsOpen={setIsGiveModalOpen} />
+      <GiveModal
+        isOpen={isGiveModalOpen}
+        setIsOpen={setIsGiveModalOpen}
+        wheat={gameState.wheat}
+        tomato={gameState.tomato}
+        rice={gameState.rice}
+      />
       <div className="border-4 border-black rounded-xl">
         <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
       </div>
