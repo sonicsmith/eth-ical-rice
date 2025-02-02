@@ -25,6 +25,7 @@ export class Game extends Scene {
   foodNeeded: string = "";
   amountNeeded: number = 0;
   selectedObject: Phaser.GameObjects.GameObject | null = null;
+  uiText: Phaser.GameObjects.Text;
 
   constructor() {
     super("Game");
@@ -137,27 +138,32 @@ export class Game extends Scene {
     background.fillRect(boxX, boxY, boxWidth, boxHeight);
     background.setDepth(15);
 
-    // Content for the box
-    const content =
-      "Wheat Seeds: 0\n" +
-      "Tomato Seeds: 0\n" +
-      "Rice Seeds: 0\n" +
-      "Wheat bundles: 0\n" +
-      "Tomatoes: 0\n" +
-      "Rice grains: 0";
-
-    const text = this.add.text(20, 20, content, {
+    const text = this.add.text(20, 20, "", {
       fontFamily: "Arial",
       fontSize: 16,
       color: "#000000",
     });
     text.setDepth(20);
+    this.uiText = text;
 
     const container = this.add.container(0, 0, [border, background, text]);
     container.setScrollFactor(0);
     container.setDepth(20);
 
+    this.updateUI();
+
     EventBus.emit("current-scene-ready", this);
+  }
+
+  updateUI() {
+    this.uiText.setText(
+      `Wheat Seeds: ${this.seedCount.wheat}\n` +
+        `Tomato Seeds: ${this.seedCount.tomato}\n` +
+        `Rice Seeds: ${this.seedCount.rice}\n` +
+        `Wheat bundles: ${this.supplyCount.wheat}\n` +
+        `Tomatoes: ${this.supplyCount.tomato}\n` +
+        `Rice grains: ${this.supplyCount.rice}`
+    );
   }
 
   createSeed() {
@@ -173,6 +179,7 @@ export class Game extends Scene {
     this.physics.add.collider(seed, this.player, () => {
       console.log("Seed picked up", type);
       this.seedCount[type]++;
+      this.updateUI();
       seed.destroy();
       setTimeout(() => {
         this.createSeed();
