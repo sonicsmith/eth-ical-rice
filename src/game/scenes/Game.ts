@@ -107,7 +107,7 @@ export class Game extends Scene {
 
         if (this.selectedObject instanceof Character) {
           console.log("Character clicked", this.selectedObject);
-          EventBus.emit("agent-selected", this);
+          EventBus.emit("character-selected", this);
         }
 
         // Move Player

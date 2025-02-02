@@ -7,6 +7,7 @@ import { EventBus } from "@/game/EventBus";
 import { FarmPlot } from "@/game/objects/FarmPlot";
 import { GiveModal } from "./GiveModal";
 import { Character } from "@/game/objects/Character";
+import { DonateModal } from "./DonateModal";
 
 export const GameView = () => {
   const phaserRef = useRef<IRefPhaserGame | null>(null);
@@ -16,6 +17,7 @@ export const GameView = () => {
     null
   );
   const [selectedAgent, setSelectedAgent] = useState<Character | null>(null);
+  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
 
   const [gameState, setGameState] = useState({
     wheatSeeds: 0,
@@ -42,12 +44,17 @@ export const GameView = () => {
       setSelectedFarmPlot(farmPlot);
       setIsPlantModalOpen(true);
     });
-    // Listen for agent-selected
-    EventBus.on("agent-selected", (scene: Game) => {
-      const agent = scene?.selectedObject as Character;
-      console.log("Agent selected", agent);
-      setSelectedAgent(agent);
-      setIsGiveModalOpen(true);
+    // Listen for character-selected
+    EventBus.on("character-selected", (scene: Game) => {
+      const character = scene?.selectedObject as Character;
+      console.log("Character selected", character);
+
+      if (character.key === "player") {
+        setIsDonateModalOpen(true);
+      } else {
+        setSelectedAgent(character);
+        setIsGiveModalOpen(true);
+      }
     });
     // Listen for seed-picked
     EventBus.on("seed-picked", (scene: Game) => {
@@ -62,7 +69,7 @@ export const GameView = () => {
     });
     return () => {
       EventBus.removeListener("farm-plot-selected");
-      EventBus.removeListener("agent-selected");
+      EventBus.removeListener("character-selected");
       EventBus.removeListener("seed-picked");
     };
   };
@@ -82,6 +89,11 @@ export const GameView = () => {
         wheat={gameState.wheat}
         tomato={gameState.tomato}
         playerName={selectedAgent?.key}
+      />
+      <DonateModal
+        isOpen={isDonateModalOpen}
+        setIsOpen={setIsDonateModalOpen}
+        rice={gameState.rice}
       />
       <div className="border-4 border-black rounded-xl">
         <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
