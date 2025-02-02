@@ -118,6 +118,45 @@ export class Game extends Scene {
       }
     );
 
+    // UI
+    // Define box dimensions
+    const boxWidth = 200;
+    const boxHeight = 130;
+    const boxX = 10;
+    const boxY = 10;
+
+    // Create a black border
+    const border = this.add.graphics();
+    border.lineStyle(4, 0x000000); // black border color
+    border.strokeRect(boxX, boxY, boxWidth, boxHeight);
+    border.setDepth(15);
+
+    // Create a white background box
+    const background = this.add.graphics();
+    background.fillStyle(0xffffff, 1); // white fill
+    background.fillRect(boxX, boxY, boxWidth, boxHeight);
+    background.setDepth(15);
+
+    // Content for the box
+    const content =
+      "Wheat Seeds: 0\n" +
+      "Tomato Seeds: 0\n" +
+      "Rice Seeds: 0\n" +
+      "Wheat bundles: 0\n" +
+      "Tomatoes: 0\n" +
+      "Rice grains: 0";
+
+    const text = this.add.text(20, 20, content, {
+      fontFamily: "Arial",
+      fontSize: 16,
+      color: "#000000",
+    });
+    text.setDepth(20);
+
+    const container = this.add.container(0, 0, [border, background, text]);
+    container.setScrollFactor(0);
+    container.setDepth(20);
+
     EventBus.emit("current-scene-ready", this);
   }
 
