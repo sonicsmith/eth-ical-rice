@@ -1,9 +1,11 @@
 import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import { Character } from "../objects/Character";
-import { agentKeys } from "@/constants";
+import { agentKeys, PLANT_GROWTH_TIME } from "@/constants";
 import { AgentInstruction, Script } from "@/types";
 import { FarmPlot } from "../objects/FarmPlot";
+import { getFarmPlotsTimes } from "@/utils/getFarmPlotsTimes";
+import { getFarmPlotsTypes } from "@/utils/getFarmPlotsTypes";
 
 export class Game extends Scene {
   mapLayer: Phaser.Tilemaps.TilemapLayer;
@@ -26,6 +28,8 @@ export class Game extends Scene {
   amountNeeded: number = 0;
   selectedObject: Phaser.GameObjects.GameObject | null = null;
   uiText: Phaser.GameObjects.Text;
+  farmPlots: FarmPlot[] = [];
+  farmPlotPlants: Phaser.GameObjects.Sprite[] = [];
 
   constructor() {
     super("Game");
@@ -89,7 +93,8 @@ export class Game extends Scene {
           x: mapLayer.width / 2 + (x - 1.5) * 32,
           y: mapLayer.height / 2 + (y - 1.5) * 32,
         });
-        farmPlot.setIndex(x * y);
+        farmPlot.setIndex(this.farmPlots.length);
+        this.farmPlots.push(farmPlot);
       }
     }
 
@@ -152,6 +157,8 @@ export class Game extends Scene {
 
     this.updateUI();
 
+    this.updateFarmPlots();
+
     EventBus.emit("current-scene-ready", this);
   }
 
@@ -164,6 +171,40 @@ export class Game extends Scene {
         `Tomatoes: ${this.supplyCount.tomato}\n` +
         `Rice grains: ${this.supplyCount.rice}`
     );
+  }
+
+  updateFarmPlots() {
+    for (let i = 0; i < this.farmPlotPlants.length; i++) {
+      const farmPlot = this.farmPlotPlants[i];
+      if (farmPlot) {
+        farmPlot.destroy();
+      }
+    }
+    const farmPlotTypes = getFarmPlotsTypes();
+    const farmPlotTimes = getFarmPlotsTimes();
+    const currentTime = new Date().getTime() / 1000;
+    farmPlotTimes.forEach((time, index) => {
+      if (time > 0) {
+        const plantType = farmPlotTypes[index];
+        const growTime = Math.min(currentTime - time, PLANT_GROWTH_TIME);
+        const NUMBER_FRAMES = 5;
+        // Rice plant looks like wheat plant
+        const frameOffset = plantType < 2 ? plantType * 6 : 0;
+        const frame =
+          Math.ceil((growTime / PLANT_GROWTH_TIME) * NUMBER_FRAMES) +
+          frameOffset;
+        const farmPlot = this.farmPlots[index];
+        const plant = this.add.sprite(
+          farmPlot.x,
+          farmPlot.y - 3,
+          "plants",
+          frame
+        );
+        plant.setDepth(2);
+
+        this.farmPlotPlants.push(plant);
+      }
+    });
   }
 
   createSeed() {
