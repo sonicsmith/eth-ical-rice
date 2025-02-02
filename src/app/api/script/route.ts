@@ -1,3 +1,4 @@
+import { getScriptHash } from "@/utils/getScriptHash";
 import { NextResponse } from "next/server";
 
 if (!process.env.PINATA_GATEWAY_URL) {
@@ -9,12 +10,11 @@ if (!process.env.PINATA_GATEWAY_KEY) {
 
 export const GET = async () => {
   // TODO: Get the hash from a contract
-  const ipfsHash =
-    "bafkreifaelxfypcds74ck36qg7npmt5db4mddwccg5cbdec7uynowbbtji";
+  const ipfsHash = getScriptHash();
 
-  const script = await fetch(
-    `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsHash}?pinataGatewayToken=${process.env.PINATA_GATEWAY_KEY}`
-  ).then((res) => res.json());
+  const url = `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsHash}`;
+  const queryString = `pinataGatewayToken=${process.env.PINATA_GATEWAY_KEY}`;
+  const script = await fetch(`${url}?${queryString}`).then((res) => res.json());
 
   return NextResponse.json(script);
 };
