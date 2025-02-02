@@ -1,9 +1,9 @@
-import { MainView } from "@/components/MainView";
+import { LoginView } from "@/components/LoginView";
 
 export default function Home() {
   return (
     <div>
-      <MainView />
+      <LoginView />
     </div>
   );
 }
