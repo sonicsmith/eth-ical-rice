@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { generateScript } from "./generateScript";
 import { pinata } from "@/utils/pinata";
+import { setScriptHash } from "@/utils/setScriptHash";
 
 export const GET = async (request: NextRequest) => {
   console.log("Getting instructions");
@@ -13,9 +14,8 @@ export const GET = async (request: NextRequest) => {
       name: `eth-ical-rice-${date}.json`,
     },
   });
-  const url = await pinata.gateways.convert(uploadData.IpfsHash);
 
-  // TODO: Save the hash to a contract
+  setScriptHash(uploadData.IpfsHash);
 
-  return NextResponse.json({ url }, { status: 200 });
+  return NextResponse.json({ hash: uploadData.IpfsHash }, { status: 200 });
 };
