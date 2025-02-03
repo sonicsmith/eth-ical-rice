@@ -34,6 +34,7 @@ export const PlantModal = ({
     setIsLoading(true);
     await plantSeed(plantType);
     setIsLoading(false);
+    setIsOpen(false);
   };
 
   return (

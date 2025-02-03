@@ -10,3 +10,5 @@ export interface Script {
   amount: number;
   foodType: string;
 }
+
+export type PlantType = "wheat" | "tomato" | "rice";
