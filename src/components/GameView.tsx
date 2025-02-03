@@ -1,13 +1,14 @@
 import { IRefPhaserGame, PhaserGame } from "@/game/PhaserGame";
 import { Game } from "@/game/scenes/Game";
-import { Script } from "@/types";
-import { useRef, useState } from "react";
+import { PlantType, Script } from "@/types";
+import { useCallback, useRef, useState } from "react";
 import { PlantModal } from "./PlantModal";
 import { EventBus } from "@/game/EventBus";
 import { FarmPlot } from "@/game/objects/FarmPlot";
 import { GiveModal } from "./GiveModal";
 import { Character } from "@/game/objects/Character";
 import { DonateModal } from "./DonateModal";
+import { usePrivy } from "@privy-io/react-auth";
 
 export const GameView = () => {
   const phaserRef = useRef<IRefPhaserGame | null>(null);
@@ -28,6 +29,17 @@ export const GameView = () => {
     rice: 0,
   });
 
+  const { signMessage } = usePrivy();
+
+  const plantSeed = useCallback(
+    async (plantType: PlantType) => {
+      const message = `Plant ${plantType} seed`;
+      const signature = await signMessage({ message });
+      console.log("Signature", signature);
+    },
+    [signMessage, selectedFarmPlot]
+  );
+
   // Run on start
   const currentScene = (scene: Phaser.Scene) => {
     // Get today's script
@@ -37,6 +49,7 @@ export const GameView = () => {
         const gameScene = scene as Game;
         gameScene?.setTodaysScript(response);
       });
+
     // Listen for farm-plot-selected
     EventBus.on("farm-plot-selected", (scene: Game) => {
       const farmPlot = scene?.selectedObject as FarmPlot;
@@ -48,7 +61,6 @@ export const GameView = () => {
     EventBus.on("character-selected", (scene: Game) => {
       const character = scene?.selectedObject as Character;
       console.log("Character selected", character);
-
       if (character.key === "player") {
         setIsDonateModalOpen(true);
       } else {
@@ -82,6 +94,7 @@ export const GameView = () => {
         wheatSeeds={gameState.wheatSeeds}
         tomatoSeeds={gameState.tomatoSeeds}
         riceSeeds={gameState.riceSeeds}
+        plantSeed={plantSeed}
       />
       <GiveModal
         isOpen={isGiveModalOpen}

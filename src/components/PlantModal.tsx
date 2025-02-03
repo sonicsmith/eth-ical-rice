@@ -10,6 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useState } from "react";
+import { PlantType } from "@/types";
 
 export const PlantModal = ({
   isOpen,
@@ -17,13 +19,23 @@ export const PlantModal = ({
   wheatSeeds,
   tomatoSeeds,
   riceSeeds,
+  plantSeed,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   wheatSeeds: number;
   tomatoSeeds: number;
   riceSeeds: number;
+  plantSeed: (plantType: PlantType) => Promise<void>;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onClick = async (plantType: PlantType) => {
+    setIsLoading(true);
+    await plantSeed(plantType);
+    setIsLoading(false);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
@@ -32,9 +44,18 @@ export const PlantModal = ({
           <DialogDescription>Choose what seed to plant</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
-          <Button disabled={wheatSeeds === 0}>Wheat</Button>
-          <Button disabled={tomatoSeeds === 0}>Tomato</Button>
-          <Button disabled={riceSeeds === 0}>Rice</Button>
+          <Button disabled={wheatSeeds === 0} onClick={() => onClick("wheat")}>
+            Wheat
+          </Button>
+          <Button
+            disabled={tomatoSeeds === 0}
+            onClick={() => onClick("tomato")}
+          >
+            Tomato
+          </Button>
+          <Button disabled={riceSeeds === 0} onClick={() => onClick("rice")}>
+            Rice
+          </Button>
         </div>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
