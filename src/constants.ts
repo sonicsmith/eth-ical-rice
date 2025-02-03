@@ -18,5 +18,5 @@ export const CONTRACT_ABI = parseAbi([
   `function setFarmPlot(address user, uint256 index, uint8 plotType) external`,
   `function chargeNextCampaign(uint256 amount) external`,
   `function getNextCampaign() external view returns (Campaign memory)`,
-  `function getFarmPlot(address user, uint256 index) external view returns (FarmPlot memory)`,
+  `function getFarmPlots(address user) external view returns (FarmPlot[] memory)`,
 ]);

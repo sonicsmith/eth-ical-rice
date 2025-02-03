@@ -4,8 +4,6 @@ import { Character } from "../objects/Character";
 import { agentKeys, PLANT_GROWTH_TIME } from "@/constants";
 import { AgentInstruction, Script } from "@/types";
 import { FarmPlot } from "../objects/FarmPlot";
-import { getFarmPlotsTimes } from "@/utils/getFarmPlotsTimes";
-import { getFarmPlotsTypes } from "@/utils/getFarmPlotsTypes";
 
 export class Game extends Scene {
   mapLayer: Phaser.Tilemaps.TilemapLayer;
@@ -173,23 +171,25 @@ export class Game extends Scene {
     );
   }
 
-  updateFarmPlots() {
+  async updateFarmPlots() {
+    const address = "0x5C5425f6F88f316C9E4a2C23f185cf694AE8b47B";
+    const farmPlots = (await fetch(`/api/farm/${address}`).then((res) =>
+      res.json()
+    )) as { time: number; plotType: number }[];
     for (let i = 0; i < this.farmPlotPlants.length; i++) {
       const farmPlot = this.farmPlotPlants[i];
       if (farmPlot) {
         farmPlot.destroy();
       }
     }
-    const farmPlotTypes = getFarmPlotsTypes();
-    const farmPlotTimes = getFarmPlotsTimes();
+
     const currentTime = new Date().getTime() / 1000;
-    farmPlotTimes.forEach((time, index) => {
+    farmPlots.forEach(({ time, plotType }, index) => {
       if (time > 0) {
-        const plantType = farmPlotTypes[index];
         const growTime = Math.min(currentTime - time, PLANT_GROWTH_TIME);
         const NUMBER_FRAMES = 5;
         // Rice plant looks like wheat plant
-        const frameOffset = plantType < 2 ? plantType * 6 : 0;
+        const frameOffset = plotType < 2 ? plotType * 6 : 0;
         const frame =
           Math.ceil((growTime / PLANT_GROWTH_TIME) * NUMBER_FRAMES) +
           frameOffset;
