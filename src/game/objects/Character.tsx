@@ -31,7 +31,7 @@ export class Character extends Phaser.GameObjects.Sprite {
           start: (index + 8) * 13,
           end: (index + 8) * 13 + 8,
         }),
-        frameRate: 8,
+        frameRate: 15,
         repeat: -1,
       });
     });
