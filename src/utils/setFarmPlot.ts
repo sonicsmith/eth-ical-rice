@@ -1,3 +1,5 @@
+"server only";
+
 export const setFarmPlots = async ({
   address,
   index,

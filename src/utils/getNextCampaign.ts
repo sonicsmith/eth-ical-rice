@@ -1,3 +1,5 @@
+"server only";
+
 import { CONTRACT_ABI } from "@/constants";
 import { publicClient } from "./viem";
 

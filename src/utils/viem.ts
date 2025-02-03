@@ -1,3 +1,5 @@
+"server only";
+
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { xaiTestnet } from "viem/chains";
