@@ -1,5 +1,6 @@
 import { agentKeys } from "@/constants";
 import { AgentInstruction, Script } from "@/types";
+import { getNextCampaign } from "@/utils/getNextCampaign";
 import OpenAI from "openai";
 
 if (!process.env.DEEP_SEEK_API_KEY) {
@@ -40,6 +41,9 @@ export const generateScript = async (): Promise<Script> => {
   const amount = Math.floor(Math.random() * 5) + 1;
   const personInNeed = talker;
 
+  const campaign = await getNextCampaign();
+  console.log("Campaign", campaign);
+
   for (let i = 0; i < COMMANDS_PER_DAY; i++) {
     let messageContent = "";
 
@@ -56,7 +60,13 @@ export const generateScript = async (): Promise<Script> => {
       messageContent = `You are ${talker}, reply to ${listener}, who just said "${lastMessage}".`;
     }
 
-    const prompt = `${context} ${messageContent} ${formatting}`;
+    let prompt = `${context} ${messageContent} ${formatting}`;
+    if (i === 0 && !!campaign) {
+      const productName = campaign.name;
+      const productDescription = campaign.description;
+      const productPlacement = `Also subtly mention our sponsor, '${productName}' - ${productDescription}.`;
+      prompt = prompt + productPlacement;
+    }
 
     console.log("Making call to ai api");
     const completion = await openai.chat.completions.create({
