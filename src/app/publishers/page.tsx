@@ -1,3 +1,9 @@
+import { PublisherView } from "@/components/PublisherView";
+
 export default function Publishers() {
-  return <div>{/* <MainView /> */}</div>;
+  return (
+    <div>
+      <PublisherView />
+    </div>
+  );
 }
