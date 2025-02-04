@@ -1,5 +1,5 @@
 import { MINUTE, PLANT_TYPES } from "@/constants";
-import { setFarmPlot } from "@/utils/setFarmPlot";
+import { plantAtFarmPlot } from "@/utils/plantAtFarmPlot";
 import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -24,7 +24,7 @@ export const POST = async (request: NextRequest) => {
   }
 
   const plantNumber = PLANT_TYPES.indexOf(plantType);
-  await setFarmPlot({
+  await plantAtFarmPlot({
     userAddress: address,
     plantType: plantNumber,
     index: plotIndex,

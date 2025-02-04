@@ -8,7 +8,7 @@ if (!process.env.NEXT_PUBLIC_CONTRACT_ADDRESS) {
 }
 const address = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`;
 
-export const setFarmPlot = async ({
+export const plantAtFarmPlot = async ({
   userAddress,
   plantType,
   index,
@@ -22,7 +22,7 @@ export const setFarmPlot = async ({
   const { request: simulatedRequest } = await publicClient.simulateContract({
     address,
     abi: CONTRACT_ABI,
-    functionName: "setFarmPlot",
+    functionName: "plantAtFarmPlot",
     args: [userAddress as `0x${string}`, index, plantType],
     account,
   });
