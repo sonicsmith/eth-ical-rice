@@ -13,7 +13,7 @@ if (!process.env.NEXT_PUBLIC_USDC_ADDRESS) {
 }
 const address = process.env.NEXT_PUBLIC_USDC_ADDRESS as `0x${string}`;
 
-export const transferUsdc = async ({
+export const transferUsdcToServer = async ({
   sender,
   amount,
 }: {

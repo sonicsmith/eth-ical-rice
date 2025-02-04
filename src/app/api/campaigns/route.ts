@@ -1,6 +1,6 @@
 import { MINUTE } from "@/constants";
 import { addCampaign } from "@/utils/addCampaign";
-import { transferUsdc } from "@/utils/transferUsdc";
+import { transferUsdcToServer } from "@/utils/transferUsdcToServer";
 import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 import { parseUnits } from "viem";
@@ -33,7 +33,7 @@ export const POST = async (request: NextRequest) => {
 
   const usdcAmount = parseUnits(amount, 6);
 
-  await transferUsdc({ sender: address, amount: usdcAmount });
+  await transferUsdcToServer({ sender: address, amount: usdcAmount });
 
   const hash = await addCampaign({ name, description, amount: usdcAmount });
 
