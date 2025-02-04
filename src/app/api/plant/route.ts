@@ -1,3 +1,5 @@
+import { MINUTE, PLANT_TYPES } from "@/constants";
+import { setFarmPlot } from "@/utils/setFarmPlot";
 import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,7 +16,19 @@ export const POST = async (request: NextRequest) => {
     signature,
   });
 
-  // TODO: If valid, set the farm plot in the contract
+  const { plantType, timestamp, plotIndex } = JSON.parse(message);
+
+  const timeSinceSignature = Date.now() / 1000 - timestamp;
+  if (timeSinceSignature > MINUTE) {
+    return NextResponse.json({ error: "Expired Signature" }, { status: 400 });
+  }
+
+  const plantNumber = PLANT_TYPES.indexOf(plantType);
+  await setFarmPlot({
+    userAddress: address,
+    plantType: plantNumber,
+    index: plotIndex,
+  });
 
   return NextResponse.json({ valid });
 };
