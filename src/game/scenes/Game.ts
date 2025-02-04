@@ -57,7 +57,7 @@ export class Game extends Scene {
     const player = new Character({
       scene: this,
       x: mapLayer.width / 2,
-      y: mapLayer.height / 2 - 100,
+      y: mapLayer.height / 2 - 200,
       key: "player",
     });
     this.physics.add.existing(player);
