@@ -1,4 +1,4 @@
-import { publicClient } from "@/utils/viem";
+import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
@@ -7,7 +7,7 @@ export const POST = async (request: NextRequest) => {
   if (!address || !signature || !message) {
     return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
   }
-
+  const publicClient = getBasePublicClient();
   const valid = await publicClient.verifyMessage({
     address,
     message,

@@ -1,7 +1,7 @@
 import { MINUTE } from "@/constants";
 import { addCampaign } from "@/utils/addCampaign";
 import { transferUsdc } from "@/utils/transferUsdc";
-import { publicClient } from "@/utils/viem";
+import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 import { parseUnits } from "viem";
 
@@ -11,7 +11,7 @@ export const POST = async (request: NextRequest) => {
   if (!address || !signature || !message) {
     return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
   }
-
+  const publicClient = getBasePublicClient();
   const valid = await publicClient.verifyMessage({
     address,
     message,
@@ -24,7 +24,7 @@ export const POST = async (request: NextRequest) => {
 
   const { name, description, amount, timestamp } = JSON.parse(message);
 
-  const timeSinceSignature = Date.now() - timestamp * 1000;
+  const timeSinceSignature = Date.now() / 1000 - timestamp;
   if (timeSinceSignature > MINUTE) {
     return NextResponse.json({ error: "Expired Signature" }, { status: 400 });
   }

@@ -12,28 +12,34 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, base } from "viem/chains";
 import { parseUnits } from "viem";
 
-if (!process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS) {
-  throw new Error("NEXT_PUBLIC_DEPLOYER_ADDRESS is required");
+if (!process.env.NEXT_PUBLIC_WALLET_ADDRESS) {
+  throw new Error("NEXT_PUBLIC_WALLET_ADDRESS is required");
 }
-const serverWallet = process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`;
+const serverWallet = process.env.NEXT_PUBLIC_WALLET_ADDRESS as `0x${string}`;
 
 if (!process.env.NEXT_PUBLIC_USDC_ADDRESS) {
   throw new Error("NEXT_PUBLIC_USDC_ADDRESS is required");
 }
 const usdcAddress = process.env.NEXT_PUBLIC_USDC_ADDRESS as `0x${string}`;
 
+const chain =
+  process.env.NEXT_PUBLIC_CHAIN_ENV === "testnet" ? base : baseSepolia;
+
 export const PublisherView = () => {
   const [campaignName, setCampaignName] = useState("");
   const [campaignDescription, setCampaignDescription] = useState("");
   const [spendAmount, setSpendAmount] = useState("");
 
-  const usdcAmount = useMemo(() => parseUnits(spendAmount, 6), [spendAmount]);
+  const usdcSpendAmount = useMemo(
+    () => parseUnits(spendAmount, 6),
+    [spendAmount]
+  );
 
   const { address } = useAccount();
-  const { signMessage } = usePrivy();
+  const { signMessage, authenticated } = usePrivy();
   const { writeContract, data } = useWriteContract();
   const approvalTransaction = useWaitForTransactionReceipt({
     hash: data,
@@ -53,7 +59,7 @@ export const PublisherView = () => {
     functionName: "allowance",
     args: [address!, serverWallet],
   });
-  console.log("approvalTransaction?.status", approvalTransaction?.status);
+
   useEffect(() => {
     if (approvalTransaction?.status === "success") {
       console.log("usdcAllowance refetch");
@@ -63,8 +69,8 @@ export const PublisherView = () => {
 
   const hasApproval = useMemo(() => {
     if (!usdcAllowance.data) return false;
-    return usdcAllowance.data >= usdcAmount;
-  }, [usdcAllowance, usdcAmount]);
+    return usdcAllowance.data >= usdcSpendAmount;
+  }, [usdcAllowance, usdcSpendAmount]);
 
   const approveSpend = async () => {
     console.log("approveBalance");
@@ -72,8 +78,8 @@ export const PublisherView = () => {
       abi: ERC20_ABI,
       address: usdcAddress,
       functionName: "approve",
-      args: [serverWallet, usdcAmount],
-      chain: baseSepolia,
+      args: [serverWallet, usdcSpendAmount],
+      chain,
     });
   };
 
@@ -99,7 +105,16 @@ export const PublisherView = () => {
         address,
       }),
     });
+    // TODO: Show campaigns
   };
+
+  if (!authenticated) {
+    return (
+      <div className="text-white flex justify-center p-8">
+        Please login to continue.
+      </div>
+    );
+  }
 
   return (
     <div className="text-white flex justify-center p-8">
@@ -131,9 +146,16 @@ export const PublisherView = () => {
         </div>
         <div className="mt-8">
           {hasApproval ? (
-            <Button onClick={createCampaign}>Create</Button>
+            <Button
+              onClick={createCampaign}
+              disabled={!campaignName || !campaignDescription || !spendAmount}
+            >
+              Create
+            </Button>
           ) : (
-            <Button onClick={approveSpend}>Approve Spend</Button>
+            <Button onClick={approveSpend} disabled={!usdcSpendAmount}>
+              Approve Spend
+            </Button>
           )}
         </div>
       </div>
