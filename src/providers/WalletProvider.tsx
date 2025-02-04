@@ -1,11 +1,14 @@
 "use client";
 
 import { PrivyProvider } from "@privy-io/react-auth";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 if (!process.env.NEXT_PUBLIC_PRIVY_APP_ID) {
   throw new Error("NEXT_PUBLIC_PRIVY_APP_ID is required");
 }
 const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+
+const queryClient = new QueryClient();
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -25,7 +28,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         },
       }}
     >
-      {children}
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </PrivyProvider>
   );
 };
