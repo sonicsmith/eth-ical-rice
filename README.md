@@ -1,6 +1,10 @@
 # ETH-ical Rice
 
-Agentic Ethereum Hackathon Entry
+Agentic Ethereum Hackathon Entry.
+
+Contracts for this project can be found [here](https://github.com/sonicsmith/eth-ical-rice-contracts).
+USDC transactions are performed on Base Sepolia.
+Game transactions are performed on Xai Sepolia.
 
 Credits:
 
