@@ -27,7 +27,8 @@ export class Game extends Scene {
   selectedObject: Phaser.GameObjects.GameObject | null = null;
   uiText: Phaser.GameObjects.Text;
   farmPlots: FarmPlot[] = [];
-  farmPlotPlants: Phaser.GameObjects.Sprite[] = [];
+  playersAddress: `0x${string}` | undefined;
+  farmUpdateTime: number = 0;
 
   constructor() {
     super("Game");
@@ -155,8 +156,6 @@ export class Game extends Scene {
 
     this.updateUI();
 
-    this.updateFarmPlots();
-
     EventBus.emit("current-scene-ready", this);
   }
 
@@ -172,37 +171,15 @@ export class Game extends Scene {
   }
 
   async updateFarmPlots() {
-    const address = "0x5C5425f6F88f316C9E4a2C23f185cf694AE8b47B";
-    const farmPlots = (await fetch(`/api/farm/${address}`).then((res) =>
-      res.json()
-    )) as { time: number; plotType: number }[];
-    for (let i = 0; i < this.farmPlotPlants.length; i++) {
-      const farmPlot = this.farmPlotPlants[i];
-      if (farmPlot) {
-        farmPlot.destroy();
-      }
-    }
-
-    const currentTime = new Date().getTime() / 1000;
+    // Get data from server
+    const response = await fetch(`/api/farm/${this.playersAddress}`).then(
+      (res) => res.json()
+    );
+    const farmPlots = response as { time: number; plotType: number }[];
+    console.log("Updating Farm plots", farmPlots);
     farmPlots.forEach(({ time, plotType }, index) => {
       if (time > 0) {
-        const growTime = Math.min(currentTime - time, PLANT_GROWTH_TIME);
-        const NUMBER_FRAMES = 5;
-        // Rice plant looks like wheat plant
-        const frameOffset = plotType < 2 ? plotType * 6 : 0;
-        const frame =
-          Math.ceil((growTime / PLANT_GROWTH_TIME) * NUMBER_FRAMES) +
-          frameOffset;
-        const farmPlot = this.farmPlots[index];
-        const plant = this.add.sprite(
-          farmPlot.x,
-          farmPlot.y - 3,
-          "plants",
-          frame
-        );
-        plant.setDepth(2);
-
-        this.farmPlotPlants.push(plant);
+        this.farmPlots[index].setPlant(time, plotType);
       }
     });
   }
@@ -251,6 +228,12 @@ export class Game extends Scene {
   }
 
   update(time: number, delta: number) {
+    // Update farm plots every 10 minutes
+    this.farmUpdateTime += delta;
+    if (this.farmUpdateTime > 600_000) {
+      this.farmUpdateTime = 0;
+      this.updateFarmPlots();
+    }
     // Update player
     this.player.update(delta);
     // Update agents
