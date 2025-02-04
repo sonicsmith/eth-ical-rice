@@ -8,7 +8,8 @@ import { FarmPlot } from "@/game/objects/FarmPlot";
 import { GiveModal } from "./GiveModal";
 import { Character } from "@/game/objects/Character";
 import { DonateModal } from "./DonateModal";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useAccount } from "wagmi";
+import { usePrivy } from "@privy-io/react-auth";
 
 export const GameView = () => {
   const phaserRef = useRef<IRefPhaserGame | null>(null);
@@ -29,7 +30,7 @@ export const GameView = () => {
     rice: 0,
   });
 
-  const { wallets } = useWallets();
+  const { address } = useAccount();
   const { signMessage } = usePrivy();
 
   const plantSeed = useCallback(
@@ -45,7 +46,6 @@ export const GameView = () => {
         plotIndex: selectedFarmPlot.index,
       });
       const { signature } = await signMessage({ message });
-      const address = wallets[0].address;
       await fetch("/api/plant", {
         method: "POST",
         headers: {
