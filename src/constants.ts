@@ -4,7 +4,8 @@ export const agentKeys = ["alice", "bob", "charlie", "david", "eve"];
 
 export const PLANT_TYPES = ["wheat", "tomato", "rice"];
 
-export const HOUR = 3600;
+export const MINUTE = 60;
+export const HOUR = 60 * MINUTE;
 export const PLANT_GROWTH_TIME = HOUR;
 export const RICE_GROWTH_TIME = 24 * HOUR;
 
@@ -19,4 +20,12 @@ export const CONTRACT_ABI = parseAbi([
   `function chargeNextCampaign(uint256 amount) external`,
   `function getNextCampaign() external view returns (Campaign memory)`,
   `function getFarmPlots(address user) external view returns (FarmPlot[] memory)`,
+]);
+
+export const ERC20_ABI = parseAbi([
+  `function balanceOf(address account) external view returns (uint256)`,
+  `function transfer(address recipient, uint256 amount) external returns (bool)`,
+  `function allowance(address owner, address spender) external view returns (uint256)`,
+  `function approve(address spender, uint256 amount) external returns (bool)`,
+  `function transferFrom(address sender, address recipient, uint256 amount) external returns (bool)`,
 ]);

@@ -1,27 +1,30 @@
 "server only";
 
-import { CONTRACT_ABI } from "@/constants";
+import { ERC20_ABI } from "@/constants";
 import { account, publicClient, walletClient } from "@/utils/viem";
+
+if (!process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS) {
+  throw new Error("NEXT_PUBLIC_DEPLOYER_ADDRESS is required");
+}
+const recipient = process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS as `0x${string}`;
 
 if (!process.env.CONTRACT_ADDRESS) {
   throw new Error("CONTRACT_ADDRESS is required");
 }
 const address = process.env.CONTRACT_ADDRESS as `0x${string}`;
 
-export const addCampaign = async ({
-  name,
-  description,
+export const transferUsdc = async ({
+  sender,
   amount,
 }: {
-  name: string;
-  description: string;
+  sender: string;
   amount: bigint;
 }) => {
   const { request: simulatedRequest } = await publicClient.simulateContract({
     address,
-    abi: CONTRACT_ABI,
-    functionName: "addCampaign",
-    args: [name, description, amount],
+    abi: ERC20_ABI,
+    functionName: "transferFrom",
+    args: [sender as `0x${string}`, recipient, amount],
     account,
   });
 
