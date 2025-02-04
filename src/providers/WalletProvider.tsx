@@ -34,8 +34,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         // Create embedded wallets for users who don't have a wallet
         embeddedWallets: {
           createOnLogin: "all-users",
-          showWalletUIs: false,
         },
+        defaultChain: baseSepolia,
       }}
     >
       <QueryClientProvider client={queryClient}>
