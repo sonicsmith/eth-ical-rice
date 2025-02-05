@@ -17,6 +17,7 @@ import { usePlantSeed } from "@/hooks/usePlantSeed";
 import { useFarmPlots } from "@/hooks/useFarmPlots";
 import { usePlantSupply } from "@/hooks/usePlantSupply";
 import { getChainIds } from "@/utils/getChainIds";
+import { useGiveToAgent } from "@/hooks/useGiveToAgent";
 
 const defaultGameState = {
   wheatSeeds: 0,
@@ -72,6 +73,24 @@ export const GameView = () => {
     [plantSeed, gameScene]
   );
 
+  const giveToAgent = useGiveToAgent();
+
+  const giveToAgentAndRefresh = useCallback(
+    async ({
+      amount,
+      plantType,
+      agent,
+    }: {
+      amount: number;
+      plantType: PlantType;
+      agent: string;
+    }) => {
+      const hash = await giveToAgent({ amount, plantType, agent });
+      setTransactionHash(hash);
+    },
+    [giveToAgent, gameScene]
+  );
+
   // Get Farm Plots
   useEffect(() => {
     console.log("Got Farm plots", farmPlots);
@@ -89,6 +108,14 @@ export const GameView = () => {
     console.log("Got Plant supply", plantSupply);
     if (plantSupply && gameScene) {
       const plantSupplyData = plantSupply.map((data) => data);
+      setGameState((oldState) => {
+        return {
+          ...oldState,
+          wheat: plantSupplyData[0],
+          tomato: plantSupplyData[1],
+          rice: plantSupplyData[2],
+        };
+      });
       gameScene.updatePlantSupply(plantSupplyData);
     }
   }, [plantSupply, gameScene]);
@@ -114,11 +141,11 @@ export const GameView = () => {
     _gameScene.playersAddress = address;
 
     // Get today's script
-    // fetch("/api/script")
-    //   .then((res) => res.json())
-    //   .then((response: Script) => {
-    //     _gameScene.setTodaysScript(response);
-    //   });
+    fetch("/api/script")
+      .then((res) => res.json())
+      .then((response: Script) => {
+        _gameScene.setTodaysScript(response);
+      });
 
     // Listen for farm-plot-selected
     EventBus.on("farm-plot-selected", async (scene: Game) => {
@@ -211,7 +238,8 @@ export const GameView = () => {
         setIsOpen={setIsGiveModalOpen}
         wheat={gameState.wheat}
         tomato={gameState.tomato}
-        playerName={selectedAgent?.key}
+        agentName={selectedAgent?.key}
+        giveToAgent={giveToAgentAndRefresh}
       />
       <DonateModal
         isOpen={isDonateModalOpen}

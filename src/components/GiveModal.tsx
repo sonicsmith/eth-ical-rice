@@ -13,23 +13,34 @@ import {
 import { Input } from "./ui/input";
 import { getCapitalized } from "@/utils/getCapitalized";
 import { useState } from "react";
+import { PlantType } from "@/types";
 
 export const GiveModal = ({
   isOpen,
   setIsOpen,
   wheat,
   tomato,
-  playerName,
+  agentName,
+  giveToAgent,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   wheat: number;
   tomato: number;
-  playerName: string | undefined;
+  agentName: string | undefined;
+  giveToAgent: ({
+    amount,
+    plantType,
+    agent,
+  }: {
+    amount: number;
+    plantType: PlantType;
+    agent: string;
+  }) => Promise<void>;
 }) => {
   const [amount, setAmount] = useState(0);
 
-  const capitalizedName = getCapitalized(playerName || "");
+  const capitalizedName = getCapitalized(agentName || "");
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
@@ -54,8 +65,22 @@ export const GiveModal = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button disabled={amount > wheat}>{amount} Wheat bundles</Button>
-          <Button disabled={amount > tomato}>{amount} Tomatoes</Button>
+          <Button
+            disabled={amount > wheat}
+            onClick={() =>
+              giveToAgent({ amount, plantType: "wheat", agent: agentName! })
+            }
+          >
+            {amount} Wheat bundles
+          </Button>
+          <Button
+            disabled={amount > tomato}
+            onClick={() =>
+              giveToAgent({ amount, plantType: "tomato", agent: agentName! })
+            }
+          >
+            {amount} Tomatoes
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
