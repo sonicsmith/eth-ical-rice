@@ -175,11 +175,11 @@ export class Game extends Scene {
     const response = await fetch(`/api/farm/${this.playersAddress}`).then(
       (res) => res.json()
     );
-    const farmPlots = response as { time: number; plotType: number }[];
+    const farmPlots = response as { time: number; plantType: number }[];
     console.log("Updating Farm plots", farmPlots);
-    farmPlots.forEach(({ time, plotType }, index) => {
+    farmPlots.forEach(({ time, plantType }, index) => {
       if (time > 0) {
-        this.farmPlots[index].setPlant(time, plotType);
+        this.farmPlots[index].setPlant(time, plantType);
       }
     });
   }

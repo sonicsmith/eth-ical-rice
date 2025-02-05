@@ -20,9 +20,9 @@ export const GET = async (
     args: [playerAddress],
   });
   return NextResponse.json(
-    farmPlots.map(({ time, plotType }) => ({
+    farmPlots.map(({ time, plantType }) => ({
       time: Number(time),
-      plotType,
+      plantType,
     }))
   );
 };
