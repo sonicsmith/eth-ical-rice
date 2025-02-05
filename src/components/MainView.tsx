@@ -11,12 +11,12 @@ const GameView = dynamic(
 export const MainView = () => {
   const { ready, authenticated } = usePrivy();
 
-  if (!ready) {
-    return <div>Loading...</div>;
-  }
-
-  if (!authenticated) {
-    return <div>Please login to continue</div>;
+  if (!ready || !authenticated) {
+    return (
+      <div className="flex justify-center pt-32 text-white">
+        {!ready ? <div>LOADING...</div> : <div>LOGIN REQUIRED</div>}
+      </div>
+    );
   }
 
   return (
