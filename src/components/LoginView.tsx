@@ -17,7 +17,7 @@ export const LoginView = () => {
             <Link href={"/game"} className="text-3xl text-center font-bold">
               Play Game!
             </Link>
-            <Link className="text-center" href={"/publishers"}>
+            <Link className="text-center" href={"/publish"}>
               (Publishers click here)
             </Link>
           </div>
