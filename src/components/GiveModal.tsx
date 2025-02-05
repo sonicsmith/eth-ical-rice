@@ -54,8 +54,8 @@ export const GiveModal = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button disabled={wheat < amount}>Wheat bundles</Button>
-          <Button disabled={tomato < amount}>Tomatoes</Button>
+          <Button disabled={amount > wheat}>{amount} Wheat bundles</Button>
+          <Button disabled={amount > tomato}>{amount} Tomatoes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

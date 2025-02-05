@@ -1,6 +1,5 @@
-import { MINUTE, PLANT_TYPES } from "@/constants";
+import { MINUTE } from "@/constants";
 import { harvestFarmPlot } from "@/utils/harvestFarmPlot";
-import { plantAtFarmPlot } from "@/utils/plantAtFarmPlot";
 import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 

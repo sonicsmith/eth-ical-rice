@@ -37,18 +37,14 @@ export const GameView = () => {
   );
   const [selectedAgent, setSelectedAgent] = useState<Character | null>(null);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
-
   const [gameState, setGameState] = useState(defaultGameState);
-
   const [transactionHash, setTransactionHash] = useState<`0x${string}`>("0x0");
-  console.log("transactionHash", transactionHash);
+
   const { address } = useAccount();
   const { signMessage } = usePrivy();
-
   const { toast } = useToast();
 
-  const plantSeed = usePlantSeed(selectedFarmPlot, setTransactionHash);
-
+  const plantSeed = usePlantSeed(selectedFarmPlot);
   const { data: farmPlots, refetch: refetchFarmPlots } = useFarmPlots(address!);
   const { data: plantSupply, refetch: refetchPlantSupply } = usePlantSupply(
     address!
@@ -59,16 +55,16 @@ export const GameView = () => {
     hash: transactionHash,
     chainId: getChainIds().xai,
   });
-  console.log("transactionReceipt", transactionReceipt);
+
   useEffect(() => {
-    console.log("Refetching farm data");
     refetchFarmPlots();
     refetchPlantSupply();
   }, [transactionReceipt.data]);
 
   const plantSeedAndRefresh = useCallback(
     async (plantType: PlantType) => {
-      await plantSeed(plantType);
+      const hash = await plantSeed(plantType);
+      setTransactionHash(hash);
       if (gameScene) {
         gameScene.seedCount[plantType]--;
       }

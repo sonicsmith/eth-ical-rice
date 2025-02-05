@@ -5,10 +5,7 @@ import { useCallback } from "react";
 import { useAccount } from "wagmi";
 import { useToast } from "./use-toast";
 
-export const usePlantSeed = (
-  selectedFarmPlot: FarmPlot | null,
-  setTransactionHash: (hash: `0x${string}`) => void
-) => {
+export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
   const { address } = useAccount();
   const { signMessage } = usePrivy();
   const { toast } = useToast();
@@ -41,7 +38,7 @@ export const usePlantSeed = (
         title: "Success",
         description: `Your ${plantType} has been planted`,
       });
-      setTransactionHash(response.hash);
+      return response.hash;
     },
     [signMessage, selectedFarmPlot]
   );
