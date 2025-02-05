@@ -3,13 +3,12 @@ import { AgentInstruction, Script } from "@/types";
 import { getNextCampaign } from "@/utils/getNextCampaign";
 import OpenAI from "openai";
 
-if (!process.env.DEEP_SEEK_API_KEY) {
-  throw new Error("DEEP_SEEK_API_KEY must be set");
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error("OPENAI_API_KEY must be set");
 }
 
 const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.DEEP_SEEK_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const context =
@@ -76,10 +75,12 @@ export const generateScript = async (): Promise<Script> => {
           content: prompt,
         },
       ],
-      model: "deepseek-chat",
+      model: "gpt-4o-mini",
     });
 
     const text = completion.choices[0].message.content;
+
+    console.log("text:", text);
 
     if (!text) {
       throw new Error("No text returned from OpenAI");
