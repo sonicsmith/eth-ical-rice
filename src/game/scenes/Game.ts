@@ -172,12 +172,8 @@ export class Game extends Scene {
     );
   }
 
-  async updateFarmPlots() {
+  async updateFarmPlots(farmPlots: { time: number; plantType: number }[]) {
     // Get data from server
-    const response = await fetch(`/api/farm/${this.playersAddress}`).then(
-      (res) => res.json()
-    );
-    const farmPlots = response as { time: number; plantType: number }[];
     console.log("Updating Farm plots", farmPlots);
     farmPlots.forEach(({ time, plantType }, index) => {
       if (time > 0) {
@@ -230,12 +226,6 @@ export class Game extends Scene {
   }
 
   update(time: number, delta: number) {
-    // Update farm plots every 10 minutes
-    this.farmUpdateTime += delta;
-    if (this.farmUpdateTime > TEN_MINUTES) {
-      this.farmUpdateTime = 0;
-      this.updateFarmPlots();
-    }
     // Update player
     this.player.update(delta);
     // Update agents
