@@ -5,7 +5,10 @@ import { useCallback } from "react";
 import { useAccount } from "wagmi";
 import { useToast } from "./use-toast";
 
-export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
+export const usePlantSeed = (
+  selectedFarmPlot: FarmPlot | null,
+  setTransactionHash: (hash: `0x${string}`) => void
+) => {
   const { address } = useAccount();
   const { signMessage } = usePrivy();
   const { toast } = useToast();
@@ -23,7 +26,7 @@ export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
         plotIndex: selectedFarmPlot.index,
       });
       const { signature } = await signMessage({ message });
-      await fetch("/api/plant", {
+      const response = await fetch("/api/plant", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,11 +36,12 @@ export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
           signature,
           message,
         }),
-      });
+      }).then((res) => res.json());
       toast({
         title: "Success",
         description: `Your ${plantType} has been planted`,
       });
+      setTransactionHash(response.hash);
     },
     [signMessage, selectedFarmPlot]
   );

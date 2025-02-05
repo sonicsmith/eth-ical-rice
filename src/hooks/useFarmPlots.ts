@@ -1,4 +1,4 @@
-import { CONTRACT_ABI } from "@/constants";
+import { CONTRACT_ABI, MINUTE_MS } from "@/constants";
 import { getChainIds } from "@/utils/getChainIds";
 import { useReadContract } from "wagmi";
 
@@ -16,7 +16,9 @@ export const useFarmPlots = (playerAddress: `0x${string}`) => {
     functionName: "getFarmPlots",
     chainId,
     args: [playerAddress],
+    // @ts-ignore
+    refetchInterval: 10 * MINUTE_MS,
   });
-
+  console.log("farm plot data", response.data);
   return response;
 };

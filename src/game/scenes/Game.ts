@@ -172,9 +172,7 @@ export class Game extends Scene {
     // Get data from server
     console.log("Updating Farm plots", farmPlots);
     farmPlots.forEach(({ time, plantType }, index) => {
-      if (time > 0) {
-        this.farmPlots[index].setPlant(time, plantType);
-      }
+      this.farmPlots[index].setPlant(time, plantType);
     });
   }
 

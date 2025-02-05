@@ -8,7 +8,7 @@ import { FarmPlot } from "@/game/objects/FarmPlot";
 import { GiveModal } from "./GiveModal";
 import { Character } from "@/game/objects/Character";
 import { DonateModal } from "./DonateModal";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { usePrivy } from "@privy-io/react-auth";
 import { useToast } from "@/hooks/use-toast";
 import { PLANT_TYPES } from "@/constants";
@@ -16,6 +16,7 @@ import { getCapitalized } from "@/utils/getCapitalized";
 import { usePlantSeed } from "@/hooks/usePlantSeed";
 import { useFarmPlots } from "@/hooks/useFarmPlots";
 import { usePlantSupply } from "@/hooks/usePlantSupply";
+import { getChainIds } from "@/utils/getChainIds";
 
 const defaultGameState = {
   wheatSeeds: 0,
@@ -39,25 +40,40 @@ export const GameView = () => {
 
   const [gameState, setGameState] = useState(defaultGameState);
 
+  const [transactionHash, setTransactionHash] = useState<`0x${string}`>("0x0");
+  console.log("transactionHash", transactionHash);
   const { address } = useAccount();
   const { signMessage } = usePrivy();
 
   const { toast } = useToast();
 
-  const plantSeed = usePlantSeed(selectedFarmPlot);
+  const plantSeed = usePlantSeed(selectedFarmPlot, setTransactionHash);
 
   const { data: farmPlots, refetch: refetchFarmPlots } = useFarmPlots(address!);
   const { data: plantSupply, refetch: refetchPlantSupply } = usePlantSupply(
     address!
   );
 
+  // Wait for transaction to complete
+  const transactionReceipt = useWaitForTransactionReceipt({
+    hash: transactionHash,
+    chainId: getChainIds().xai,
+  });
+  console.log("transactionReceipt", transactionReceipt);
+  useEffect(() => {
+    console.log("Refetching farm data");
+    refetchFarmPlots();
+    refetchPlantSupply();
+  }, [transactionReceipt.data]);
+
   const plantSeedAndRefresh = useCallback(
     async (plantType: PlantType) => {
       await plantSeed(plantType);
-      await refetchFarmPlots();
-      await refetchPlantSupply();
+      if (gameScene) {
+        gameScene.seedCount[plantType]--;
+      }
     },
-    [plantSeed, refetchFarmPlots]
+    [plantSeed, gameScene]
   );
 
   // Get Farm Plots
@@ -70,16 +86,16 @@ export const GameView = () => {
       }));
       gameScene.updateFarmPlots(farmPlotsData);
     }
-  }, [farmPlots, refetchFarmPlots, gameScene]);
+  }, [farmPlots, gameScene]);
 
-  // Get Farm Plots
+  // Get Plant Supply
   useEffect(() => {
-    console.log("Got Farm plots", farmPlots);
+    console.log("Got Plant supply", plantSupply);
     if (plantSupply && gameScene) {
       const plantSupplyData = plantSupply.map((data) => data);
       gameScene.updatePlantSupply(plantSupplyData);
     }
-  }, [plantSupply, refetchPlantSupply, gameScene]);
+  }, [plantSupply, gameScene]);
 
   // Game Scene Started
   useEffect(() => {
@@ -142,7 +158,7 @@ export const GameView = () => {
             title: getCapitalized(plantName),
             description: `You grew a ${plantName}!`,
           });
-          await refetchFarmPlots();
+          setTransactionHash(data.hash);
         } else {
           toast({
             title: getCapitalized(plantName),

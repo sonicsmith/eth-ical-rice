@@ -26,11 +26,11 @@ export const POST = async (request: NextRequest) => {
   }
 
   const plantNumber = PLANT_TYPES.indexOf(plantType);
-  await plantAtFarmPlot({
+  const hash = await plantAtFarmPlot({
     userAddress: address,
     plantType: plantNumber,
     index: plotIndex,
   });
 
-  return NextResponse.json({ valid });
+  return NextResponse.json({ hash });
 };
