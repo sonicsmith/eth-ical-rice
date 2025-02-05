@@ -29,17 +29,23 @@ export const DonateModal = ({
             This will donate all your rice to charity
           </DialogDescription>
         </DialogHeader>
-        <div className="">
-          Some grains of rice will be lost in transport. It is best to donate
-          rice when you have a large amount.
-        </div>
+        {rice ? (
+          <div className="">
+            Some grains of rice will be lost in transport. It is best to donate
+            rice when you have a large amount.
+          </div>
+        ) : (
+          <div className="">You don't have any rice to donate</div>
+        )}
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
               Cancel
             </Button>
           </DialogClose>
-          <Button type="button">Donate</Button>
+          <Button type="button" disabled={rice === 0}>
+            Donate
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
