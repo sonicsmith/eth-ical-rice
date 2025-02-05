@@ -21,7 +21,7 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
     this.plant?.destroy();
     this.plantNumber = plantNumber;
     this.isReadyToHarvest = false;
-    const currentTime = Date.now();
+    const currentTime = Date.now() / 1000;
     const growTime = Math.min(currentTime - time, PLANT_GROWTH_TIME);
     if (growTime >= PLANT_GROWTH_TIME) {
       this.isReadyToHarvest = true;
