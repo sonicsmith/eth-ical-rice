@@ -9,9 +9,13 @@ export const HOUR = 60 * MINUTE;
 export const PLANT_GROWTH_TIME = HOUR;
 export const RICE_GROWTH_TIME = 24 * HOUR;
 
+export const MINUTE_MS = MINUTE * 1000;
+
 export const CONTRACT_ABI = parseAbi([
   `struct Campaign { string name; string description; uint256 amount; }`,
   `struct FarmPlot { uint256 time; uint8 plantType; }`,
+  `function setScriptHash(string memory _scriptHash) external`,
+  `function getScriptHash() external view returns (string memory)`,
   `function addCampaign(string memory name, string memory description, uint256 amount) external`,
   `function plantAtFarmPlot(address user, uint8 index, uint8 plantType) external`,
   `function grantRiceSeed(address user, uint256 riceCost) external`,

@@ -15,7 +15,7 @@ export const GET = async (request: NextRequest) => {
     },
   });
 
-  setScriptHash(uploadData.IpfsHash);
+  await setScriptHash(uploadData.IpfsHash);
 
   return NextResponse.json({ hash: uploadData.IpfsHash }, { status: 200 });
 };
