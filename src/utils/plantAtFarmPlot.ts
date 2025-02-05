@@ -19,12 +19,16 @@ export const plantAtFarmPlot = async ({
 }) => {
   const publicClient = getXaiPublicClient();
   const account = getAccount();
+  const nonce = await publicClient.getTransactionCount({
+    address: account.address,
+  });
   const { request: simulatedRequest } = await publicClient.simulateContract({
     address,
     abi: CONTRACT_ABI,
     functionName: "plantAtFarmPlot",
     args: [userAddress as `0x${string}`, index, plantType],
     account,
+    nonce,
   });
   const walletClient = getXaiWalletClient();
   return walletClient.writeContract(simulatedRequest);
