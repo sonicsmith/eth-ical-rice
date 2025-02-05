@@ -67,7 +67,7 @@ export class Game extends Scene {
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
 
     // Agents
-    const agentBoundsPadding = 100;
+    const agentBoundsPadding = 300;
     const agentBoundsX = mapLayer.width - agentBoundsPadding * 2;
     const agentBoundsY = mapLayer.height - agentBoundsPadding * 2;
     agentKeys.forEach((key) => {
