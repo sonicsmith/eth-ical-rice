@@ -10,7 +10,7 @@ if (!process.env.PINATA_GATEWAY_KEY) {
 
 export const GET = async () => {
   // TODO: Get the hash from a contract
-  const ipfsHash = getScriptHash();
+  const ipfsHash = await getScriptHash();
 
   const url = `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsHash}`;
   const queryString = `pinataGatewayToken=${process.env.PINATA_GATEWAY_KEY}`;
