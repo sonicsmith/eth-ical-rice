@@ -97,7 +97,7 @@ export const PublisherView = () => {
     });
     const { signature } = await signMessage({ message });
 
-    const hash = await fetch("/api/campaigns", {
+    const { hash } = await fetch("/api/campaigns", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -108,7 +108,7 @@ export const PublisherView = () => {
         address,
       }),
     }).then((res) => res.json());
-    router.push(`/campaigns/${hash}`);
+    router.push(`/transactions/${hash}`);
   };
 
   if (!authenticated) {

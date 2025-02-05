@@ -1,9 +1,11 @@
 import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import { Character } from "../objects/Character";
-import { agentKeys, PLANT_GROWTH_TIME } from "@/constants";
+import { agentKeys, MINUTE_MS } from "@/constants";
 import { AgentInstruction, Script } from "@/types";
 import { FarmPlot } from "../objects/FarmPlot";
+
+const TEN_MINUTES = 10 * MINUTE_MS;
 
 export class Game extends Scene {
   mapLayer: Phaser.Tilemaps.TilemapLayer;
@@ -230,7 +232,7 @@ export class Game extends Scene {
   update(time: number, delta: number) {
     // Update farm plots every 10 minutes
     this.farmUpdateTime += delta;
-    if (this.farmUpdateTime > 600_000) {
+    if (this.farmUpdateTime > TEN_MINUTES) {
       this.farmUpdateTime = 0;
       this.updateFarmPlots();
     }
