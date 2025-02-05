@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
 import { getCapitalized } from "@/utils/getCapitalized";
+import { useState } from "react";
 
 export const GiveModal = ({
   isOpen,
@@ -26,6 +27,8 @@ export const GiveModal = ({
   tomato: number;
   playerName: string | undefined;
 }) => {
+  const [amount, setAmount] = useState(0);
+
   const capitalizedName = getCapitalized(playerName || "");
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -37,9 +40,13 @@ export const GiveModal = ({
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
-          <Button disabled={wheat === 0}>Wheat</Button>
-          <Button disabled={tomato === 0}>Tomato</Button>
-          <Input type="number" placeholder="Amount" />
+          <Input
+            type="number"
+            placeholder="Amount"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+          />
+          <div className="flex gap-2"></div>
         </div>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
@@ -47,6 +54,8 @@ export const GiveModal = ({
               Cancel
             </Button>
           </DialogClose>
+          <Button disabled={wheat < amount}>Wheat bundles</Button>
+          <Button disabled={tomato < amount}>Tomatoes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
