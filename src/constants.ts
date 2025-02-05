@@ -10,13 +10,13 @@ export const PLANT_GROWTH_TIME = HOUR;
 export const RICE_GROWTH_TIME = 24 * HOUR;
 
 export const CONTRACT_ABI = parseAbi([
-  `error NotAuthorized()`,
-  `error NoCampaignsAvailable()`,
-  `error FarmPlotAlreadySet()`,
   `struct Campaign { string name; string description; uint256 amount; }`,
-  `struct FarmPlot { uint256 time; uint8 plotType; }`,
+  `struct FarmPlot { uint256 time; uint8 plantType; }`,
   `function addCampaign(string memory name, string memory description, uint256 amount) external`,
   `function plantAtFarmPlot(address user, uint8 index, uint8 plantType) external`,
+  `function grantRiceSeed(address user, uint256 riceCost) external`,
+  `function harvestFarmPlot(address user, uint8 index) external`,
+  `function getPlantSupply(address user) external view returns (uint8[3] memory)`,
   `function getNextCampaign() external view returns (Campaign memory)`,
   `function getFarmPlots(address user) external view returns (FarmPlot[] memory)`,
 ]);
