@@ -12,6 +12,11 @@ export const RICE_GROWTH_TIME = 24 * HOUR;
 export const MINUTE_MS = MINUTE * 1000;
 
 export const CONTRACT_ABI = parseAbi([
+  `error NotAuthorized()`,
+  `error NoCampaignsAvailable()`,
+  `error FarmPlotAlreadySet()`,
+  `error FarmPlotNotReady()`,
+  `error NotEnoughRiceSeeds()`,
   `struct Campaign { string name; string description; uint256 amount; }`,
   `struct FarmPlot { uint256 time; uint8 plantType; }`,
   `function setScriptHash(string memory _scriptHash) external`,
