@@ -14,6 +14,7 @@ import {
 } from "wagmi";
 import { baseSepolia, base } from "viem/chains";
 import { parseUnits } from "viem";
+import { useRouter } from "next/navigation";
 
 if (!process.env.NEXT_PUBLIC_WALLET_ADDRESS) {
   throw new Error("NEXT_PUBLIC_WALLET_ADDRESS is required");
@@ -72,6 +73,8 @@ export const PublisherView = () => {
     return usdcAllowance.data >= usdcSpendAmount;
   }, [usdcAllowance, usdcSpendAmount]);
 
+  const router = useRouter();
+
   const approveSpend = async () => {
     console.log("approveBalance");
     writeContract({
@@ -94,7 +97,7 @@ export const PublisherView = () => {
     });
     const { signature } = await signMessage({ message });
 
-    await fetch("/api/campaigns", {
+    const hash = await fetch("/api/campaigns", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,8 +107,8 @@ export const PublisherView = () => {
         signature,
         address,
       }),
-    });
-    // TODO: Show campaigns
+    }).then((res) => res.json());
+    router.push(`/campaigns/${hash}`);
   };
 
   if (!authenticated) {
