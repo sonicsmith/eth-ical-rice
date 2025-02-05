@@ -1,7 +1,7 @@
 import { IRefPhaserGame, PhaserGame } from "@/game/PhaserGame";
 import { Game } from "@/game/scenes/Game";
 import { PlantType, Script } from "@/types";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PlantModal } from "./PlantModal";
 import { EventBus } from "@/game/EventBus";
 import { FarmPlot } from "@/game/objects/FarmPlot";
@@ -14,9 +14,21 @@ import { useToast } from "@/hooks/use-toast";
 import { PLANT_TYPES } from "@/constants";
 import { getCapitalized } from "@/utils/getCapitalized";
 import { usePlantSeed } from "@/hooks/usePlantSeed";
+import { useFarmPlots } from "@/hooks/useFarmPlots";
+import { usePlantSupply } from "@/hooks/usePlantSupply";
+
+const defaultGameState = {
+  wheatSeeds: 0,
+  tomatoSeeds: 0,
+  riceSeeds: 0,
+  wheat: 0,
+  tomato: 0,
+  rice: 0,
+};
 
 export const GameView = () => {
   const phaserRef = useRef<IRefPhaserGame | null>(null);
+  const [gameScene, setGameScene] = useState<Game | null>(null);
   const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
   const [isGiveModalOpen, setIsGiveModalOpen] = useState(false);
   const [selectedFarmPlot, setSelectedFarmPlot] = useState<FarmPlot | null>(
@@ -25,14 +37,7 @@ export const GameView = () => {
   const [selectedAgent, setSelectedAgent] = useState<Character | null>(null);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
 
-  const [gameState, setGameState] = useState({
-    wheatSeeds: 0,
-    tomatoSeeds: 0,
-    riceSeeds: 0,
-    wheat: 0,
-    tomato: 0,
-    rice: 0,
-  });
+  const [gameState, setGameState] = useState(defaultGameState);
 
   const { address } = useAccount();
   const { signMessage } = usePrivy();
@@ -41,23 +46,67 @@ export const GameView = () => {
 
   const plantSeed = usePlantSeed(selectedFarmPlot);
 
+  const { data: farmPlots, refetch: refetchFarmPlots } = useFarmPlots(address!);
+  const { data: plantSupply, refetch: refetchPlantSupply } = usePlantSupply(
+    address!
+  );
+
+  const plantSeedAndRefresh = useCallback(
+    async (plantType: PlantType) => {
+      await plantSeed(plantType);
+      await refetchFarmPlots();
+      await refetchPlantSupply();
+    },
+    [plantSeed, refetchFarmPlots]
+  );
+
+  // Get Farm Plots
+  useEffect(() => {
+    console.log("Got Farm plots", farmPlots);
+    if (farmPlots && gameScene) {
+      const farmPlotsData = farmPlots.map((data) => ({
+        time: Number(data.time),
+        plantType: data.plantType,
+      }));
+      gameScene.updateFarmPlots(farmPlotsData);
+    }
+  }, [farmPlots, refetchFarmPlots, gameScene]);
+
+  // Get Farm Plots
+  useEffect(() => {
+    console.log("Got Farm plots", farmPlots);
+    if (plantSupply && gameScene) {
+      const plantSupplyData = plantSupply.map((data) => data);
+      gameScene.updatePlantSupply(plantSupplyData);
+    }
+  }, [plantSupply, refetchPlantSupply, gameScene]);
+
+  // Game Scene Started
+  useEffect(() => {
+    if (gameScene) {
+      console.log("Game scene started", gameScene);
+    }
+  }, [gameScene]);
+
   // Run on start
   const currentScene = (scene: Phaser.Scene) => {
-    const gameScene = scene as Game;
+    console.log("Current scene", !!scene);
+    const _gameScene = scene as Game;
 
     // TODO: Handle this better
     if (!scene) return;
     if (!address) return;
 
-    gameScene.playersAddress = address;
-    gameScene.updateFarmPlots();
+    setGameScene(_gameScene);
+
+    _gameScene.playersAddress = address;
 
     // Get today's script
-    fetch("/api/script")
-      .then((res) => res.json())
-      .then((response: Script) => {
-        gameScene.setTodaysScript(response);
-      });
+    // fetch("/api/script")
+    //   .then((res) => res.json())
+    //   .then((response: Script) => {
+    //     _gameScene.setTodaysScript(response);
+    //   });
 
     // Listen for farm-plot-selected
     EventBus.on("farm-plot-selected", async (scene: Game) => {
@@ -76,7 +125,7 @@ export const GameView = () => {
             plotIndex: farmPlot.index,
           });
           const { signature } = await signMessage({ message });
-          await fetch("/api/harvest", {
+          const response = await fetch("/api/harvest", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -87,10 +136,13 @@ export const GameView = () => {
               signature,
             }),
           });
+          const data = await response.json();
+          console.log("Harvest response", data);
           toast({
             title: getCapitalized(plantName),
             description: `You grew a ${plantName}!`,
           });
+          await refetchFarmPlots();
         } else {
           toast({
             title: getCapitalized(plantName),
@@ -120,9 +172,9 @@ export const GameView = () => {
         wheatSeeds: scene.seedCount.wheat,
         tomatoSeeds: scene.seedCount.tomato,
         riceSeeds: scene.seedCount.rice,
-        wheat: scene.supplyCount.wheat,
-        tomato: scene.supplyCount.tomato,
-        rice: scene.supplyCount.rice,
+        wheat: scene.plantSupply[0],
+        tomato: scene.plantSupply[1],
+        rice: scene.plantSupply[2],
       });
     });
     return () => {
@@ -140,7 +192,7 @@ export const GameView = () => {
         wheatSeeds={gameState.wheatSeeds}
         tomatoSeeds={gameState.tomatoSeeds}
         riceSeeds={gameState.riceSeeds}
-        plantSeed={plantSeed}
+        plantSeed={plantSeedAndRefresh}
       />
       <GiveModal
         isOpen={isGiveModalOpen}

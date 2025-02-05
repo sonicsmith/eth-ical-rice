@@ -15,7 +15,9 @@ export const POST = async (request: NextRequest) => {
     message,
     signature,
   });
-
+  if (!valid) {
+    return NextResponse.json({ error: "Invalid Signature" }, { status: 400 });
+  }
   const { plantType, timestamp, plotIndex } = JSON.parse(message);
 
   const timeSinceSignature = Date.now() / 1000 - timestamp;

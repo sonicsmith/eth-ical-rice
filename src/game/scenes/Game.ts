@@ -16,11 +16,7 @@ export class Game extends Scene {
     tomato: 0,
     rice: 0,
   };
-  supplyCount = {
-    wheat: 0,
-    tomato: 0,
-    rice: 0,
-  };
+  plantSupply = [0, 0, 0];
   agentInstructions: AgentInstruction[] = [];
   agentInstructionsIndex: number = 0;
   personInNeed: string = "";
@@ -166,13 +162,13 @@ export class Game extends Scene {
       `Wheat Seeds: ${this.seedCount.wheat}\n` +
         `Tomato Seeds: ${this.seedCount.tomato}\n` +
         `Rice Seeds: ${this.seedCount.rice}\n` +
-        `Wheat bundles: ${this.supplyCount.wheat}\n` +
-        `Tomatoes: ${this.supplyCount.tomato}\n` +
-        `Rice grains: ${this.supplyCount.rice}`
+        `Wheat bundles: ${this.plantSupply[0]}\n` +
+        `Tomatoes: ${this.plantSupply[1]}\n` +
+        `Rice grains: ${this.plantSupply[2]}`
     );
   }
 
-  async updateFarmPlots(farmPlots: { time: number; plantType: number }[]) {
+  updateFarmPlots(farmPlots: { time: number; plantType: number }[]) {
     // Get data from server
     console.log("Updating Farm plots", farmPlots);
     farmPlots.forEach(({ time, plantType }, index) => {
@@ -180,6 +176,11 @@ export class Game extends Scene {
         this.farmPlots[index].setPlant(time, plantType);
       }
     });
+  }
+
+  updatePlantSupply(supply: number[]) {
+    this.plantSupply = supply;
+    this.updateUI();
   }
 
   createSeed() {
