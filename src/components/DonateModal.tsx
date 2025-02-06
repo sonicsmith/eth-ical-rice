@@ -15,10 +15,12 @@ export const DonateModal = ({
   isOpen,
   setIsOpen,
   rice,
+  donateRice,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   rice: number;
+  donateRice: () => void;
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -43,7 +45,7 @@ export const DonateModal = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button type="button" disabled={rice === 0}>
+          <Button type="button" disabled={rice === 0} onClick={donateRice}>
             Donate
           </Button>
         </DialogFooter>

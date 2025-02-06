@@ -18,6 +18,7 @@ import { useFarmPlots } from "@/hooks/useFarmPlots";
 import { usePlantSupply } from "@/hooks/usePlantSupply";
 import { getChainIds } from "@/utils/getChainIds";
 import { useGiveToAgent } from "@/hooks/useGiveToAgent";
+import { useDonateRice } from "@/hooks/useDonateRice";
 
 const defaultGameState = {
   seeds: {
@@ -88,7 +89,6 @@ export const GameView = () => {
   );
 
   const giveToAgent = useGiveToAgent();
-
   const giveToAgentAndRefresh = useCallback(
     async ({
       amount,
@@ -104,6 +104,12 @@ export const GameView = () => {
     },
     [giveToAgent, gameScene]
   );
+
+  const donateRice = useDonateRice();
+  const donateRiceAndRefresh = useCallback(async () => {
+    const hash = await donateRice();
+    setTransactionHash(hash);
+  }, [giveToAgent, gameScene]);
 
   // Get Farm Plots
   useEffect(() => {
@@ -260,6 +266,7 @@ export const GameView = () => {
         isOpen={isDonateModalOpen}
         setIsOpen={setIsDonateModalOpen}
         rice={gameState.plants.rice}
+        donateRice={donateRiceAndRefresh}
       />
       <div className="border-4 border-black rounded-xl">
         <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
