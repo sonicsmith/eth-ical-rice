@@ -1,6 +1,7 @@
-import { MINUTE } from "@/constants";
+import { CAMPAIGN_UNIT_COST, MINUTE } from "@/constants";
 import { getPlantSupply } from "@/utils/getPlantSupply";
 import { reducePlantSupply } from "@/utils/reducePlantSupply";
+import { transferUsdcToCharity } from "@/utils/transferUsdcToCharity";
 import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -26,7 +27,6 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json({ error: "Expired Signature" }, { status: 400 });
   }
 
-  // TODO: Get rice amount
   const plantSupply = await getPlantSupply(address);
   if (!plantSupply) {
     return NextResponse.json(
@@ -40,10 +40,15 @@ export const POST = async (request: NextRequest) => {
     plant: "rice",
     amount,
   });
-  // If plants were taken away successfully
-  if (result !== null) {
-    // Donate USDC to charity
+
+  if (result === null) {
+    return NextResponse.json(
+      { error: "Can not reduce rice supply" },
+      { status: 500 }
+    );
   }
 
-  return NextResponse.json({ success: true });
+  const hash = await transferUsdcToCharity(BigInt(CAMPAIGN_UNIT_COST));
+
+  return NextResponse.json({ hash });
 };

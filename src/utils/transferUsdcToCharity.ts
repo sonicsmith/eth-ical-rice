@@ -13,7 +13,7 @@ if (!process.env.NEXT_PUBLIC_USDC_ADDRESS) {
 }
 const address = process.env.NEXT_PUBLIC_USDC_ADDRESS as `0x${string}`;
 
-export const transferUsdcToServer = async ({ amount }: { amount: bigint }) => {
+export const transferUsdcToCharity = async (amount: bigint) => {
   const publicClient = getBasePublicClient();
   const account = getAccount();
   const { request: simulatedRequest } = await publicClient.simulateContract({

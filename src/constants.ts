@@ -40,4 +40,6 @@ export const ERC20_ABI = parseAbi([
 ]);
 
 // Amount rice seeds cost to campaign in USDC
-export const CAMPAIGN_UNIT_COST = 1000;
+export const CAMPAIGN_UNIT_COST = 1_000;
+// ChatGPT gave me this number. Lets believe it till told otherwise
+export const GRAINS_IN_DOLLAR = 50_000;
