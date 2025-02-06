@@ -1,6 +1,7 @@
-import { MINUTE, PLANT_TYPES } from "@/constants";
+import { CAMPAIGN_UNIT_COST, MINUTE } from "@/constants";
 import { getScript } from "@/utils/getScript";
-import { plantAtFarmPlot } from "@/utils/plantAtFarmPlot";
+import { grantRiceSeed } from "@/utils/grantRiceSeed";
+import { reducePlantSupply } from "@/utils/reducePlantSupply";
 import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -32,12 +33,18 @@ export const POST = async (request: NextRequest) => {
   const correctAgent = agent === script.personInNeed;
   const correctPlant = plant === script.foodType;
 
-  let success = false;
-
   if (correctAmount && correctAgent && correctPlant) {
-    success = true;
-    // Give user rice seed
+    // Take away plants from user
+    const result = await reducePlantSupply({
+      playerAddress: address,
+      plant,
+      amount,
+    });
+    // If plants were taken away successfully
+    if (result !== null) {
+      await grantRiceSeed({ playerAddress: address, cost: CAMPAIGN_UNIT_COST });
+    }
   }
 
-  return NextResponse.json({ success });
+  return NextResponse.json({ success: true });
 };
