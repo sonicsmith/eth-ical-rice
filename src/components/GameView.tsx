@@ -19,6 +19,7 @@ import { usePlantSupply } from "@/hooks/usePlantSupply";
 import { getChainIds } from "@/utils/getChainIds";
 import { useGiveToAgent } from "@/hooks/useGiveToAgent";
 import { useDonateRice } from "@/hooks/useDonateRice";
+import { useRiceSeedCount } from "@/hooks/useRiceSeedCount";
 
 const defaultGameState = {
   seeds: {
@@ -50,11 +51,12 @@ export const GameView = () => {
   const { signMessage } = usePrivy();
   const { toast } = useToast();
 
-  const plantSeed = usePlantSeed(selectedFarmPlot);
   const { data: farmPlots, refetch: refetchFarmPlots } = useFarmPlots(address!);
   const { data: plantSupply, refetch: refetchPlantSupply } = usePlantSupply(
     address!
   );
+  const { data: riceSeedCount, refetch: refetchRiceSeedCount } =
+    useRiceSeedCount(address!);
 
   // Wait for transaction to complete
   const transactionReceipt = useWaitForTransactionReceipt({
@@ -65,8 +67,15 @@ export const GameView = () => {
   useEffect(() => {
     refetchFarmPlots();
     refetchPlantSupply();
-  }, [transactionReceipt.data, refetchFarmPlots, refetchPlantSupply]);
+    refetchRiceSeedCount();
+  }, [
+    transactionReceipt.data,
+    refetchFarmPlots,
+    refetchPlantSupply,
+    refetchRiceSeedCount,
+  ]);
 
+  const plantSeed = usePlantSeed(selectedFarmPlot);
   const plantSeedAndRefresh = useCallback(
     async (plantType: PlantType) => {
       const hash = await plantSeed(plantType);
@@ -111,7 +120,7 @@ export const GameView = () => {
     setTransactionHash(hash);
   }, [donateRice, setTransactionHash]);
 
-  // Get Farm Plots
+  // Update Farm Plots
   useEffect(() => {
     console.log("Got Farm plots", farmPlots);
     if (farmPlots && gameScene) {
@@ -123,7 +132,7 @@ export const GameView = () => {
     }
   }, [farmPlots, gameScene]);
 
-  // Get Plant Supply
+  // Update Plant Supply
   useEffect(() => {
     console.log("Got Plant supply", plantSupply);
     if (plantSupply && gameScene) {
@@ -141,6 +150,25 @@ export const GameView = () => {
       gameScene.updatePlantSupply(plantSupplyData);
     }
   }, [plantSupply, gameScene]);
+
+  // Update Rice Seed Count
+  useEffect(() => {
+    console.log("Got Rice seed count", riceSeedCount);
+    if (riceSeedCount && gameScene) {
+      const rice = Number(riceSeedCount);
+      gameScene.seedCount.rice = rice;
+      setGameState((oldState) => {
+        return {
+          ...oldState,
+          seeds: {
+            ...oldState.seeds,
+            rice,
+          },
+        };
+      });
+      gameScene.updateUI();
+    }
+  }, [riceSeedCount, gameScene]);
 
   // Game Scene Started
   useEffect(() => {

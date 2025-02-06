@@ -29,6 +29,7 @@ export const CONTRACT_ABI = parseAbi([
   `function getPlantSupply(address user) external view returns (uint8[3] memory)`,
   `function getNextCampaign() external view returns (Campaign memory)`,
   `function getFarmPlots(address user) external view returns (FarmPlot[] memory)`,
+  `function getRiceSeedCount(address user) external view returns (uint256)`,
 ]);
 
 export const ERC20_ABI = parseAbi([
