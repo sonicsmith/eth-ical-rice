@@ -1,6 +1,6 @@
 "server only";
 
-import { CONTRACT_ABI } from "@/constants";
+import { CONTRACT_ABI, PLANT_TYPES } from "@/constants";
 import { getAccount, getXaiPublicClient, getXaiWalletClient } from "./viem";
 
 if (!process.env.NEXT_PUBLIC_CONTRACT_ADDRESS) {
@@ -23,7 +23,7 @@ export const reducePlantSupply = async ({
     const nonce = await publicClient.getTransactionCount({
       address: account.address,
     });
-    const plantType = plant === "wheat" ? 0 : 1;
+    const plantType = PLANT_TYPES.indexOf(plant);
     const { request: simulatedRequest, result } =
       await publicClient.simulateContract({
         address,
