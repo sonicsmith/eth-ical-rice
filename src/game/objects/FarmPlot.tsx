@@ -1,11 +1,10 @@
-import { PLANT_GROWTH_TIME } from "@/constants";
+import { PLANT_GROWTH_TIME, RICE_GROWTH_TIME } from "@/constants";
 
 export class FarmPlot extends Phaser.GameObjects.Sprite {
   index: number | undefined;
   plant: Phaser.GameObjects.Sprite | undefined;
-  isReadyToHarvest: boolean = false;
   plantNumber: number | undefined;
-  plantedAt: number | undefined;
+  plantedAt: number = 0;
 
   constructor(config: any) {
     super(config.scene, config.x, config.y, "dirt", 12);
@@ -21,15 +20,11 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
   setPlant(time: number, plantNumber: number) {
     this.plant?.destroy();
     this.setTint(Phaser.Display.Color.GetColor(255, 255, 255));
-    this.isReadyToHarvest = false;
     this.plantedAt = time;
     if (time > 0) {
       this.plantNumber = plantNumber;
       const currentTime = Date.now() / 1000;
       const growTime = Math.min(currentTime - time, PLANT_GROWTH_TIME);
-      if (growTime >= PLANT_GROWTH_TIME) {
-        this.isReadyToHarvest = true;
-      }
       const NUMBER_FRAMES = 5;
       // Rice plant looks like wheat plant
       const frameOffset = plantNumber < 2 ? plantNumber * 6 : 0;
@@ -42,15 +37,11 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
     }
   }
 
-  getTimeToHarvest() {
-    if (this.plantedAt) {
-      const currentTime = Date.now() / 1000;
-      const growTime = Math.min(
-        currentTime - this.plantedAt,
-        PLANT_GROWTH_TIME
-      );
-      return PLANT_GROWTH_TIME - growTime;
-    }
-    return 0;
+  getTimeTillHarvest() {
+    const currentTime = Date.now() / 1000;
+    const plantGrowTime =
+      this.plantNumber === 2 ? RICE_GROWTH_TIME : PLANT_GROWTH_TIME;
+    const growTime = Math.min(currentTime - this.plantedAt, plantGrowTime);
+    return PLANT_GROWTH_TIME - growTime;
   }
 }

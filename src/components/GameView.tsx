@@ -49,7 +49,6 @@ export const GameView = () => {
   const [transactionHash, setTransactionHash] = useState<`0x${string}`>("0x0");
 
   const { address } = useAccount();
-  const { signMessage } = usePrivy();
   const { toast } = useToast();
 
   const { data: farmPlots, refetch: refetchFarmPlots } = useFarmPlots(address!);
@@ -67,6 +66,7 @@ export const GameView = () => {
 
   // Refetch data on transaction completion
   useEffect(() => {
+    console.log("Refetching from Transaction", transactionReceipt.data);
     refetchFarmPlots();
     refetchPlantSupply();
     refetchRiceSeedCount();
@@ -133,6 +133,7 @@ export const GameView = () => {
 
   // Update Farm Plots
   useEffect(() => {
+    console.log("Got new farmPlots", farmPlots);
     if (farmPlots && gameScene) {
       const farmPlotsData = farmPlots.map((data) => ({
         time: Number(data.time),
@@ -145,6 +146,7 @@ export const GameView = () => {
 
   // Update Plant Supply
   useEffect(() => {
+    console.log("Got new plantSupply", plantSupply);
     if (plantSupply && gameScene) {
       const plantSupplyData = plantSupply.map((data) => data);
       console.log("Updating Plant Supply", plantSupplyData);
@@ -164,10 +166,11 @@ export const GameView = () => {
 
   // Update Rice Seed Count
   useEffect(() => {
-    console.log("Got Rice seed count", riceSeedCount);
+    console.log("Got new Rice seed count", riceSeedCount);
     if (riceSeedCount && gameScene) {
       const rice = Number(riceSeedCount);
       gameScene.seedCount.rice = rice;
+      console.log("Updating Rice Seed Count", rice);
       setGameState((oldState) => {
         return {
           ...oldState,
@@ -211,20 +214,21 @@ export const GameView = () => {
     // Listen for farm-plot-selected
     EventBus.on("farm-plot-selected", async (scene: Game) => {
       const farmPlot = scene?.selectedObject as FarmPlot;
-      console.log("Farm plot selected", farmPlot.index);
 
       // If the farm plot is already planted
       if (!!farmPlot.plant) {
-        const isReadyToHarvest = farmPlot.isReadyToHarvest;
+        const isReadyToHarvest = farmPlot.getTimeTillHarvest() < 1;
         if (isReadyToHarvest) {
           harvestPlantAndRefresh(farmPlot);
         } else {
           const plantNumber = farmPlot.plantNumber!;
           const plantName = PLANT_TYPES[plantNumber];
-          const timeToGo = (farmPlot.getTimeToHarvest() / 60).toFixed(0);
+          const minutesToGo = Math.round(farmPlot.getTimeTillHarvest() / 60);
+          const display =
+            minutesToGo < 60 ? "less than a minute" : `${minutesToGo} minutes`;
           toast({
             title: getCapitalized(plantName),
-            description: `${timeToGo} minutes till harvest`,
+            description: `${display} till harvest`,
           });
         }
       } else {
@@ -267,7 +271,7 @@ export const GameView = () => {
     };
     const timerId = setInterval(() => {
       refreshData();
-    }, MINUTE_MS * 10);
+    }, MINUTE_MS);
     refreshData();
 
     return () => {
