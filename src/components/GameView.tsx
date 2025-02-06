@@ -20,12 +20,16 @@ import { getChainIds } from "@/utils/getChainIds";
 import { useGiveToAgent } from "@/hooks/useGiveToAgent";
 
 const defaultGameState = {
-  wheatSeeds: 0,
-  tomatoSeeds: 0,
-  riceSeeds: 0,
-  wheat: 0,
-  tomato: 0,
-  rice: 0,
+  seeds: {
+    wheat: 0,
+    tomato: 0,
+    rice: 0,
+  },
+  plants: {
+    wheat: 0,
+    tomato: 0,
+    rice: 0,
+  },
 };
 
 export const GameView = () => {
@@ -68,6 +72,16 @@ export const GameView = () => {
       setTransactionHash(hash);
       if (gameScene) {
         gameScene.seedCount[plantType]--;
+        setGameState((oldState) => {
+          return {
+            ...oldState,
+            seeds: {
+              ...oldState.seeds,
+              [plantType]: oldState.seeds[plantType] - 1,
+            },
+          };
+        });
+        gameScene.updateUI();
       }
     },
     [plantSeed, gameScene]
@@ -208,12 +222,16 @@ export const GameView = () => {
     // Listen for seed-picked
     EventBus.on("seed-picked", (scene: Game) => {
       setGameState({
-        wheatSeeds: scene.seedCount.wheat,
-        tomatoSeeds: scene.seedCount.tomato,
-        riceSeeds: scene.seedCount.rice,
-        wheat: scene.plantSupply[0],
-        tomato: scene.plantSupply[1],
-        rice: scene.plantSupply[2],
+        seeds: {
+          wheat: scene.seedCount.wheat,
+          tomato: scene.seedCount.tomato,
+          rice: scene.seedCount.rice,
+        },
+        plants: {
+          wheat: scene.plantSupply[0],
+          tomato: scene.plantSupply[1],
+          rice: scene.plantSupply[2],
+        },
       });
     });
     return () => {
@@ -228,23 +246,20 @@ export const GameView = () => {
       <PlantModal
         isOpen={isPlantModalOpen}
         setIsOpen={setIsPlantModalOpen}
-        wheatSeeds={gameState.wheatSeeds}
-        tomatoSeeds={gameState.tomatoSeeds}
-        riceSeeds={gameState.riceSeeds}
+        seeds={gameState.seeds}
         plantSeed={plantSeedAndRefresh}
       />
       <GiveModal
         isOpen={isGiveModalOpen}
         setIsOpen={setIsGiveModalOpen}
-        wheat={gameState.wheat}
-        tomato={gameState.tomato}
+        plants={gameState.plants}
         agentName={selectedAgent?.key}
         giveToAgent={giveToAgentAndRefresh}
       />
       <DonateModal
         isOpen={isDonateModalOpen}
         setIsOpen={setIsDonateModalOpen}
-        rice={gameState.rice}
+        rice={gameState.plants.rice}
       />
       <div className="border-4 border-black rounded-xl">
         <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />

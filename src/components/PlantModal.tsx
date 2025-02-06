@@ -16,16 +16,12 @@ import { PlantType } from "@/types";
 export const PlantModal = ({
   isOpen,
   setIsOpen,
-  wheatSeeds,
-  tomatoSeeds,
-  riceSeeds,
+  seeds,
   plantSeed,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  wheatSeeds: number;
-  tomatoSeeds: number;
-  riceSeeds: number;
+  seeds: Record<PlantType, number>;
   plantSeed: (plantType: PlantType) => Promise<void>;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,16 +41,16 @@ export const PlantModal = ({
           <DialogDescription>Choose what seed to plant</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
-          <Button disabled={wheatSeeds === 0} onClick={() => onClick("wheat")}>
+          <Button disabled={seeds.wheat === 0} onClick={() => onClick("wheat")}>
             Wheat
           </Button>
           <Button
-            disabled={tomatoSeeds === 0}
+            disabled={seeds.tomato === 0}
             onClick={() => onClick("tomato")}
           >
             Tomato
           </Button>
-          <Button disabled={riceSeeds === 0} onClick={() => onClick("rice")}>
+          <Button disabled={seeds.rice === 0} onClick={() => onClick("rice")}>
             Rice
           </Button>
         </div>

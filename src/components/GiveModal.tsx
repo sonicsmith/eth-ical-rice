@@ -18,15 +18,13 @@ import { PlantType } from "@/types";
 export const GiveModal = ({
   isOpen,
   setIsOpen,
-  wheat,
-  tomato,
+  plants,
   agentName,
   giveToAgent,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  wheat: number;
-  tomato: number;
+  plants: Record<PlantType, number>;
   agentName: string | undefined;
   giveToAgent: ({
     amount,
@@ -66,7 +64,7 @@ export const GiveModal = ({
             </Button>
           </DialogClose>
           <Button
-            disabled={amount > wheat}
+            disabled={amount > plants.wheat}
             onClick={() =>
               giveToAgent({ amount, plantType: "wheat", agent: agentName! })
             }
@@ -74,7 +72,7 @@ export const GiveModal = ({
             {amount} Wheat bundles
           </Button>
           <Button
-            disabled={amount > tomato}
+            disabled={amount > plants.tomato}
             onClick={() =>
               giveToAgent({ amount, plantType: "tomato", agent: agentName! })
             }
