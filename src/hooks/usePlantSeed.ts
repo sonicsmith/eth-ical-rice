@@ -21,7 +21,12 @@ export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
         timestamp,
         plotIndex: selectedFarmPlot.index,
       });
-      const { signature } = await signMessage({ message });
+      const uiOptions = {
+        title: "Confirm",
+        description: `Plant ${plantType} seed?`,
+        buttonText: `OK`,
+      };
+      const { signature } = await signMessage({ message }, { uiOptions });
       const response = await fetch("/api/plant", {
         method: "POST",
         headers: {

@@ -25,7 +25,12 @@ export const useGiveToAgent = () => {
         amount,
         agent,
       });
-      const { signature } = await signMessage({ message });
+      const uiOptions = {
+        title: "Confirm",
+        description: `Give ${plantType} to ${agent}?`,
+        buttonText: `OK`,
+      };
+      const { signature } = await signMessage({ message }, { uiOptions });
       const response = await fetch("/api/give", {
         method: "POST",
         headers: {
