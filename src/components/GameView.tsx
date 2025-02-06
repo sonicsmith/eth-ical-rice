@@ -123,21 +123,21 @@ export const GameView = () => {
 
   // Update Farm Plots
   useEffect(() => {
-    console.log("Got Farm plots", farmPlots);
     if (farmPlots && gameScene) {
       const farmPlotsData = farmPlots.map((data) => ({
         time: Number(data.time),
         plantType: data.plantType,
       }));
+      console.log("Updating Farm plots", farmPlotsData);
       gameScene.updateFarmPlots(farmPlotsData);
     }
   }, [farmPlots, gameScene]);
 
   // Update Plant Supply
   useEffect(() => {
-    console.log("Got Plant supply", plantSupply);
     if (plantSupply && gameScene) {
       const plantSupplyData = plantSupply.map((data) => data);
+      console.log("Updating Plant Supply", plantSupplyData);
       setGameState((oldState) => {
         return {
           ...oldState,
@@ -271,19 +271,23 @@ export const GameView = () => {
         },
       });
     });
-    // Refetch onchain data every 10 minutes
-    const timeout = setTimeout(() => {
-      console.log("Refetching data");
+
+    const refreshData = () => {
+      console.log("Refetching onchain data");
       refetchFarmPlots();
       refetchPlantSupply();
       refetchRiceSeedCount();
+    };
+    const timerId = setInterval(() => {
+      refreshData();
     }, MINUTE_MS * 10);
+    refreshData();
 
     return () => {
       EventBus.removeListener("farm-plot-selected");
       EventBus.removeListener("character-selected");
       EventBus.removeListener("seed-picked");
-      timeout && clearTimeout(timeout);
+      clearInterval(timerId);
     };
   };
 
