@@ -37,7 +37,7 @@ export const POST = async (request: NextRequest) => {
   const amount = plantSupply[2];
   const result = await reducePlantSupply({
     playerAddress: address,
-    plant: "rice",
+    plantType: "rice",
     amount,
   });
 

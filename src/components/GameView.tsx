@@ -65,7 +65,7 @@ export const GameView = () => {
   useEffect(() => {
     refetchFarmPlots();
     refetchPlantSupply();
-  }, [transactionReceipt.data]);
+  }, [transactionReceipt.data, refetchFarmPlots, refetchPlantSupply]);
 
   const plantSeedAndRefresh = useCallback(
     async (plantType: PlantType) => {
@@ -102,14 +102,14 @@ export const GameView = () => {
       const hash = await giveToAgent({ amount, plantType, agent });
       setTransactionHash(hash);
     },
-    [giveToAgent, gameScene]
+    [giveToAgent]
   );
 
   const donateRice = useDonateRice();
   const donateRiceAndRefresh = useCallback(async () => {
     const hash = await donateRice();
     setTransactionHash(hash);
-  }, [giveToAgent, gameScene]);
+  }, [donateRice, setTransactionHash]);
 
   // Get Farm Plots
   useEffect(() => {

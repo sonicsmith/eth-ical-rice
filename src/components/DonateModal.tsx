@@ -37,7 +37,7 @@ export const DonateModal = ({
             rice when you have a large amount.
           </div>
         ) : (
-          <div className="">You don't have any rice to donate</div>
+          <div className="">You don&apos;t have any rice to donate</div>
         )}
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
