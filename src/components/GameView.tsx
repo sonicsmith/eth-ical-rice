@@ -20,6 +20,7 @@ import { getChainIds } from "@/utils/getChainIds";
 import { useGiveToAgent } from "@/hooks/useGiveToAgent";
 import { useDonateRice } from "@/hooks/useDonateRice";
 import { useRiceSeedCount } from "@/hooks/useRiceSeedCount";
+import { useHarvestPlant } from "@/hooks/useHarvestPlant";
 
 const defaultGameState = {
   seeds: {
@@ -96,6 +97,15 @@ export const GameView = () => {
       }
     },
     [plantSeed, gameScene]
+  );
+
+  const harvestPlant = useHarvestPlant();
+  const harvestPlantAndRefresh = useCallback(
+    async (farmPlot: FarmPlot) => {
+      const hash = await harvestPlant(farmPlot);
+      setTransactionHash(hash);
+    },
+    [harvestPlant]
   );
 
   const giveToAgent = useGiveToAgent();
@@ -203,53 +213,24 @@ export const GameView = () => {
       const farmPlot = scene?.selectedObject as FarmPlot;
       console.log("Farm plot selected", farmPlot.index);
 
-      const hasPlant = farmPlot.plant !== undefined;
-      const isReadyToHarvest = farmPlot.isReadyToHarvest;
-
-      if (hasPlant) {
-        const plantNumber = farmPlot.plantNumber!;
-        const plantName = PLANT_TYPES[plantNumber];
+      // If the farm plot is already planted
+      if (!!farmPlot.plant) {
+        const isReadyToHarvest = farmPlot.isReadyToHarvest;
         if (isReadyToHarvest) {
-          const message = JSON.stringify({
-            timestamp: Math.floor(Date.now() / 1000),
-            plotIndex: farmPlot.index,
-          });
-          const uiOptions = {
-            title: "Confirm",
-            description: `Harvest ${plantName}?`,
-            buttonText: `OK`,
-          };
-          const { signature } = await signMessage({ message }, { uiOptions });
-          const response = await fetch("/api/harvest", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              address,
-              message,
-              signature,
-            }),
-          });
-          const data = await response.json();
-          console.log("Harvest response", data);
-          toast({
-            title: getCapitalized(plantName),
-            description: `You harvested your ${plantName}!`,
-          });
-          setTransactionHash(data.hash);
+          harvestPlantAndRefresh(farmPlot);
         } else {
+          const plantNumber = farmPlot.plantNumber!;
+          const plantName = PLANT_TYPES[plantNumber];
           const timeToGo = (farmPlot.getTimeToHarvest() / 60).toFixed(0);
           toast({
             title: getCapitalized(plantName),
             description: `${timeToGo} minutes till harvest`,
           });
         }
-        return;
+      } else {
+        setSelectedFarmPlot(farmPlot);
+        setIsPlantModalOpen(true);
       }
-
-      setSelectedFarmPlot(farmPlot);
-      setIsPlantModalOpen(true);
     });
     // Listen for character-selected
     EventBus.on("character-selected", (scene: Game) => {
