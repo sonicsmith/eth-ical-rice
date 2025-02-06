@@ -95,7 +95,12 @@ export const PublisherView = () => {
       amount: spendAmount,
       timestamp,
     });
-    const { signature } = await signMessage({ message });
+    const uiOptions = {
+      title: "Confirm",
+      description: `Create Campaign?`,
+      buttonText: `OK`,
+    };
+    const { signature } = await signMessage({ message }, { uiOptions });
 
     const { hash } = await fetch("/api/campaigns", {
       method: "POST",

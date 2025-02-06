@@ -12,7 +12,12 @@ export const useDonateRice = () => {
     const message = JSON.stringify({
       timestamp: Math.floor(Date.now() / 1000),
     });
-    const { signature } = await signMessage({ message });
+    const uiOptions = {
+      title: "Confirm",
+      description: `Donate all your rice to charity?`,
+      buttonText: `OK`,
+    };
+    const { signature } = await signMessage({ message }, { uiOptions });
     const response = await fetch("/api/donate", {
       method: "POST",
       headers: {

@@ -214,7 +214,12 @@ export const GameView = () => {
             timestamp: Math.floor(Date.now() / 1000),
             plotIndex: farmPlot.index,
           });
-          const { signature } = await signMessage({ message });
+          const uiOptions = {
+            title: "Confirm",
+            description: `Harvest ${plantName}?`,
+            buttonText: `OK`,
+          };
+          const { signature } = await signMessage({ message }, { uiOptions });
           const response = await fetch("/api/harvest", {
             method: "POST",
             headers: {
@@ -230,13 +235,14 @@ export const GameView = () => {
           console.log("Harvest response", data);
           toast({
             title: getCapitalized(plantName),
-            description: `You grew a ${plantName}!`,
+            description: `You harvested your ${plantName}!`,
           });
           setTransactionHash(data.hash);
         } else {
+          const timeToGo = (farmPlot.getTimeToHarvest() / 60).toFixed(0);
           toast({
             title: getCapitalized(plantName),
-            description: `Your ${plantName} is still growing`,
+            description: `${timeToGo} minutes till harvest`,
           });
         }
         return;

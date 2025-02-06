@@ -5,6 +5,7 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
   plant: Phaser.GameObjects.Sprite | undefined;
   isReadyToHarvest: boolean = false;
   plantNumber: number | undefined;
+  plantedAt: number | undefined;
 
   constructor(config: any) {
     super(config.scene, config.x, config.y, "dirt", 12);
@@ -21,6 +22,7 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
     this.plant?.destroy();
     this.setTint(Phaser.Display.Color.GetColor(255, 255, 255));
     this.isReadyToHarvest = false;
+    this.plantedAt = time;
     if (time > 0) {
       this.plantNumber = plantNumber;
       const currentTime = Date.now() / 1000;
@@ -38,5 +40,17 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
       plant.setDepth(2);
       this.plant = plant;
     }
+  }
+
+  getTimeToHarvest() {
+    if (this.plantedAt) {
+      const currentTime = Date.now() / 1000;
+      const growTime = Math.min(
+        currentTime - this.plantedAt,
+        PLANT_GROWTH_TIME
+      );
+      return PLANT_GROWTH_TIME - growTime;
+    }
+    return 0;
   }
 }
