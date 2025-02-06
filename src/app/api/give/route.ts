@@ -20,28 +20,27 @@ export const POST = async (request: NextRequest) => {
   if (!valid) {
     return NextResponse.json({ error: "Invalid Signature" }, { status: 400 });
   }
-  const { timestamp, plant, agent, amount } = JSON.parse(message);
+  const { timestamp, plantType, agent, amount } = JSON.parse(message);
 
   const timeSinceSignature = Date.now() / 1000 - timestamp;
   if (timeSinceSignature > MINUTE) {
     return NextResponse.json({ error: "Expired Signature" }, { status: 400 });
   }
-
   const script = await getScript();
 
   const correctAmount = amount === script.amount;
   const correctAgent = agent === script.personInNeed;
-  const correctPlant = plant === script.foodType;
+  const correctPlant = plantType === script.foodType;
 
-  if (correctAmount && correctAgent && correctPlant) {
-    // Take away plants from user
-    const result = await reducePlantSupply({
-      playerAddress: address,
-      plant,
-      amount,
-    });
-    // If plants were taken away successfully
-    if (result !== null) {
+  // Take away plants from user
+  const result = await reducePlantSupply({
+    playerAddress: address,
+    plantType,
+    amount,
+  });
+  // If plants were taken away successfully
+  if (result !== null) {
+    if (correctAmount && correctAgent && correctPlant) {
       await grantRiceSeed({ playerAddress: address, cost: CAMPAIGN_UNIT_COST });
     }
   }

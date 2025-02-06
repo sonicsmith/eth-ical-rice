@@ -27,7 +27,7 @@ export const useGiveToAgent = () => {
       });
       const uiOptions = {
         title: "Confirm",
-        description: `Give ${plantType} to ${agent}?`,
+        description: `Give ${amount} ${plantType}s to ${agent}?`,
         buttonText: `OK`,
       };
       const { signature } = await signMessage({ message }, { uiOptions });
@@ -44,7 +44,7 @@ export const useGiveToAgent = () => {
       }).then((res) => res.json());
       toast({
         title: "Success",
-        description: `Your ${plantType} has been given to ${agent}`,
+        description: `Your ${plantType}s have been given to ${agent}`,
       });
       return response.hash;
     },

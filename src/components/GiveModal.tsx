@@ -37,7 +37,6 @@ export const GiveModal = ({
   }) => Promise<void>;
 }) => {
   const [amount, setAmount] = useState(0);
-
   const capitalizedName = getCapitalized(agentName || "");
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

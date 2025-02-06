@@ -131,9 +131,11 @@ export const GameView = () => {
       setGameState((oldState) => {
         return {
           ...oldState,
-          wheat: plantSupplyData[0],
-          tomato: plantSupplyData[1],
-          rice: plantSupplyData[2],
+          plants: {
+            wheat: plantSupplyData[0],
+            tomato: plantSupplyData[1],
+            rice: plantSupplyData[2],
+          },
         };
       });
       gameScene.updatePlantSupply(plantSupplyData);
@@ -246,7 +248,7 @@ export const GameView = () => {
       EventBus.removeListener("seed-picked");
     };
   };
-
+  console.log("plants", gameState.plants);
   return (
     <div className="flex justify-center">
       <PlantModal
