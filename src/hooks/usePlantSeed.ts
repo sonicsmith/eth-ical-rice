@@ -15,7 +15,6 @@ export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
       if (!selectedFarmPlot) {
         throw new Error("No farm plot selected");
       }
-      // TODO: Reduce the number of seeds
       const timestamp = Math.floor(Date.now() / 1000);
       const message = JSON.stringify({
         plantType,
@@ -40,7 +39,7 @@ export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
       });
       return response.hash;
     },
-    [signMessage, selectedFarmPlot]
+    [address, signMessage, toast, selectedFarmPlot]
   );
 
   return plantSeed;

@@ -43,7 +43,7 @@ export const useGiveToAgent = () => {
       });
       return response.hash;
     },
-    [address, signMessage]
+    [address, signMessage, toast]
   );
 
   return giveToAgent;

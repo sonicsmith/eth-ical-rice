@@ -19,6 +19,6 @@ export const useFarmPlots = (playerAddress: `0x${string}`) => {
     // @ts-ignore
     refetchInterval: 10 * MINUTE_MS,
   });
-  console.log("farm plot data", response.data);
+
   return response;
 };
