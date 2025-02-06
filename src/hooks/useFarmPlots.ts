@@ -16,8 +16,6 @@ export const useFarmPlots = (playerAddress: `0x${string}`) => {
     functionName: "getFarmPlots",
     chainId,
     args: [playerAddress],
-    // @ts-ignore
-    refetchInterval: 10 * MINUTE_MS,
   });
 
   return response;

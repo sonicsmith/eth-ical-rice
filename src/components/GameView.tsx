@@ -11,7 +11,7 @@ import { DonateModal } from "./DonateModal";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { usePrivy } from "@privy-io/react-auth";
 import { useToast } from "@/hooks/use-toast";
-import { PLANT_TYPES } from "@/constants";
+import { MINUTE_MS, PLANT_TYPES } from "@/constants";
 import { getCapitalized } from "@/utils/getCapitalized";
 import { usePlantSeed } from "@/hooks/usePlantSeed";
 import { useFarmPlots } from "@/hooks/useFarmPlots";
@@ -64,6 +64,7 @@ export const GameView = () => {
     chainId: getChainIds().xai,
   });
 
+  // Refetch data on transaction completion
   useEffect(() => {
     refetchFarmPlots();
     refetchPlantSupply();
@@ -235,7 +236,7 @@ export const GameView = () => {
         } else {
           toast({
             title: getCapitalized(plantName),
-            description: `Your ${plantName} is growing`,
+            description: `Your ${plantName} is still growing`,
           });
         }
         return;
@@ -270,13 +271,22 @@ export const GameView = () => {
         },
       });
     });
+    // Refetch onchain data every 10 minutes
+    const timeout = setTimeout(() => {
+      console.log("Refetching data");
+      refetchFarmPlots();
+      refetchPlantSupply();
+      refetchRiceSeedCount();
+    }, MINUTE_MS * 10);
+
     return () => {
       EventBus.removeListener("farm-plot-selected");
       EventBus.removeListener("character-selected");
       EventBus.removeListener("seed-picked");
+      timeout && clearTimeout(timeout);
     };
   };
-  console.log("plants", gameState.plants);
+
   return (
     <div className="flex justify-center">
       <PlantModal
