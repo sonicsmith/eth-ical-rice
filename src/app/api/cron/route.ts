@@ -4,6 +4,13 @@ import { pinata } from "@/utils/pinata";
 import { setScriptHash } from "@/utils/setScriptHash";
 
 export const GET = async (request: NextRequest) => {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
+
   console.log("Getting instructions");
   const script = await generateScript();
 
