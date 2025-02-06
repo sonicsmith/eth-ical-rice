@@ -20,9 +20,9 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
   setPlant(time: number, plantNumber: number) {
     this.plant?.destroy();
     this.setTint(Phaser.Display.Color.GetColor(255, 255, 255));
+    this.isReadyToHarvest = false;
     if (time > 0) {
       this.plantNumber = plantNumber;
-      this.isReadyToHarvest = false;
       const currentTime = Date.now() / 1000;
       const growTime = Math.min(currentTime - time, PLANT_GROWTH_TIME);
       if (growTime >= PLANT_GROWTH_TIME) {

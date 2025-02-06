@@ -114,7 +114,6 @@ export class Game extends Scene {
         }
 
         // Move Player
-        console.log("pointerdown", pointer);
         const x = pointer.worldX;
         const y = pointer.worldY;
         this.player.setDestination({ x, y });
