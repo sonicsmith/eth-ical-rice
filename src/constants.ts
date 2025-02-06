@@ -25,6 +25,7 @@ export const CONTRACT_ABI = parseAbi([
   `function plantAtFarmPlot(address user, uint8 index, uint8 plantType) external`,
   `function grantRiceSeed(address user, uint256 riceCost) external`,
   `function harvestFarmPlot(address user, uint8 index) external`,
+  `function reducePlantSupply(address user, uint8 plantType, uint8 amount) external`,
   `function getPlantSupply(address user) external view returns (uint8[3] memory)`,
   `function getNextCampaign() external view returns (Campaign memory)`,
   `function getFarmPlots(address user) external view returns (FarmPlot[] memory)`,
@@ -37,3 +38,6 @@ export const ERC20_ABI = parseAbi([
   `function approve(address spender, uint256 amount) external returns (bool)`,
   `function transferFrom(address sender, address recipient, uint256 amount) external returns (bool)`,
 ]);
+
+// Amount rice seeds cost to campaign in USDC
+export const CAMPAIGN_UNIT_COST = 1000;
