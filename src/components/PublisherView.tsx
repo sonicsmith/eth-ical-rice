@@ -140,7 +140,9 @@ export const PublisherView = () => {
             <div className="text-2xl">Campaign Description:</div>
             <div>
               <Input
-                placeholder={"Building the most valuable community in web3."}
+                placeholder={
+                  "ETHGlobal is growing the most valuable developer community in web3"
+                }
                 value={campaignDescription}
                 onChange={(e) => setCampaignDescription(e.target.value)}
               />
