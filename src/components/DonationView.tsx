@@ -32,7 +32,7 @@ export const DonationView = ({ hash }: { hash: string }) => {
               target="_blank"
               rel="noreferrer"
             >
-              Base Scan
+              Block explorer
             </a>
           </div>
         </div>
