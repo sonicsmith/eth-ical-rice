@@ -102,6 +102,7 @@ export const GameView = () => {
   const harvestPlant = useHarvestPlant();
   const harvestPlantAndRefresh = useCallback(
     async (farmPlot: FarmPlot) => {
+      farmPlot.setPlant(0, 0);
       const hash = await harvestPlant(farmPlot);
       setTransactionHash(hash);
     },
