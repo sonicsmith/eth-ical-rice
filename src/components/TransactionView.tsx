@@ -1,14 +1,12 @@
 "use client";
 
+import { getChainIds } from "@/utils/getChainIds";
 import { useTransactionReceipt } from "wagmi";
-
-const chainId =
-  process.env.NEXT_PUBLIC_CHAIN_ENV === "testnet" ? 37714555429 : 660279;
 
 export const TransactionView = ({ hash }: { hash: string }) => {
   const result = useTransactionReceipt({
     hash: hash as `0x${string}`,
-    chainId,
+    chainId: getChainIds().xai,
   });
 
   return (
@@ -23,7 +21,7 @@ export const TransactionView = ({ hash }: { hash: string }) => {
         </div>
         <div className="mt-4">
           <a
-            href={`${process.env.NEXT_PUBLIC_BASE_BLOCK_EXPLORER}/${hash}`}
+            href={`${process.env.NEXT_PUBLIC_XAI_BLOCK_EXPLORER}/${hash}`}
             target="_blank"
             rel="noreferrer"
             className="underline"

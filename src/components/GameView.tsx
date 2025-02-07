@@ -21,6 +21,7 @@ import { useDonateRice } from "@/hooks/useDonateRice";
 import { useRiceSeedCount } from "@/hooks/useRiceSeedCount";
 import { useHarvestPlant } from "@/hooks/useHarvestPlant";
 import { useScript } from "@/hooks/useScript";
+import { useRouter } from "next/navigation";
 
 const defaultGameState = {
   seeds: {
@@ -132,10 +133,11 @@ export const GameView = () => {
     [giveToAgent]
   );
 
+  const route = useRouter();
   const donateRice = useDonateRice();
   const donateRiceAndRefresh = useCallback(async () => {
     const hash = await donateRice();
-    setTransactionHash(hash);
+    route.push(`/donations/${hash}`);
   }, [donateRice, setTransactionHash]);
 
   // Update Farm Plots
