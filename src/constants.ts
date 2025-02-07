@@ -41,6 +41,13 @@ export const ERC20_ABI = parseAbi([
 ]);
 
 // Amount rice seeds cost to campaign in USDC
-export const CAMPAIGN_UNIT_COST = 1_000;
-// ChatGPT gave me this number. Lets believe it till told otherwise
-export const GRAINS_IN_DOLLAR = 50_000;
+export const ONE_USDC = 1_000_000;
+// One cent per seed
+export const CAMPAIGN_UNIT_COST = 10_000;
+
+// World Food Programme (WFP) ShareTheMeal
+// $0.80 feeds a child for a day.
+// $1 provides 125 grams of rice, or approximately 6,200 grains of rice.
+export const GRAINS_PER_USDC = 6_200;
+export const RICE_GRAINS_PER_SEED =
+  (CAMPAIGN_UNIT_COST / ONE_USDC) * GRAINS_PER_USDC;

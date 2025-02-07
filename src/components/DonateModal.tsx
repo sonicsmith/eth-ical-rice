@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { RICE_GRAINS_PER_SEED } from "@/constants";
 
 export const DonateModal = ({
   isOpen,
@@ -28,7 +29,8 @@ export const DonateModal = ({
         <DialogHeader>
           <DialogTitle>Donate Rice</DialogTitle>
           <DialogDescription>
-            This will donate all your rice to charity
+            This will donate {(rice * RICE_GRAINS_PER_SEED).toLocaleString()}{" "}
+            rice grains to charity
           </DialogDescription>
         </DialogHeader>
         {rice ? (

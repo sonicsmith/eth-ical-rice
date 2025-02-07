@@ -1,7 +1,7 @@
 import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import { Character } from "../objects/Character";
-import { agentKeys, MINUTE_MS } from "@/constants";
+import { agentKeys, MINUTE_MS, RICE_GRAINS_PER_SEED } from "@/constants";
 import { AgentInstruction, Script } from "@/types";
 import { FarmPlot } from "../objects/FarmPlot";
 
@@ -196,7 +196,9 @@ export class Game extends Scene {
         `Rice Seeds: ${this.seedCount.rice}\n` +
         `Wheat bundles: ${this.plantSupply[0]}\n` +
         `Tomatoes: ${this.plantSupply[1]}\n` +
-        `Rice grains: ${this.plantSupply[2]}`
+        `Rice grains: ${(
+          this.plantSupply[2] * RICE_GRAINS_PER_SEED
+        ).toLocaleString()}`
     );
   }
 
