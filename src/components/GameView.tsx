@@ -9,7 +9,6 @@ import { GiveModal } from "./GiveModal";
 import { Character } from "@/game/objects/Character";
 import { DonateModal } from "./DonateModal";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
-import { usePrivy } from "@privy-io/react-auth";
 import { useToast } from "@/hooks/use-toast";
 import { MINUTE_MS, PLANT_TYPES } from "@/constants";
 import { getCapitalized } from "@/utils/getCapitalized";
@@ -66,12 +65,12 @@ export const GameView = () => {
 
   // Refetch data on transaction completion
   useEffect(() => {
-    console.log("Refetching from Transaction", transactionReceipt.data);
+    console.log("Refetching from Transaction");
     refetchFarmPlots();
     refetchPlantSupply();
     refetchRiceSeedCount();
   }, [
-    transactionReceipt.data,
+    transactionReceipt.data?.blockNumber,
     refetchFarmPlots,
     refetchPlantSupply,
     refetchRiceSeedCount,
@@ -252,7 +251,7 @@ export const GameView = () => {
       const character = scene?.selectedObject as Character;
       console.log("Character selected", character);
       if (character.key === "player") {
-        setIsDonateModalOpen(true);
+        // Ignore
       } else {
         setSelectedAgent(character);
         setIsGiveModalOpen(true);
@@ -272,6 +271,9 @@ export const GameView = () => {
           rice: scene.plantSupply[2],
         },
       });
+    });
+    EventBus.on("donate-rice", (scene: Game) => {
+      setIsDonateModalOpen(true);
     });
 
     const refreshData = () => {

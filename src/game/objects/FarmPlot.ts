@@ -25,12 +25,14 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
     if (time > 0) {
       this.plantNumber = plantNumber;
       const currentTime = Date.now() / 1000;
-      const growTime = Math.min(currentTime - time, PLANT_GROWTH_TIME);
+      const plantGrowTime =
+        this.plantNumber === 2 ? RICE_GROWTH_TIME : PLANT_GROWTH_TIME;
+      const growTime = Math.min(currentTime - time, plantGrowTime);
       const NUMBER_FRAMES = 5;
       // Rice plant looks like wheat plant
       const frameOffset = plantNumber < 2 ? plantNumber * 6 : 0;
       const frame =
-        Math.ceil((growTime / PLANT_GROWTH_TIME) * NUMBER_FRAMES) + frameOffset;
+        Math.ceil((growTime / plantGrowTime) * NUMBER_FRAMES) + frameOffset;
       this.setTint(Phaser.Display.Color.GetColor(230, 230, 230));
       const plant = this.scene.add.sprite(this.x, this.y - 3, "plants", frame);
       plant.setDepth(2);

@@ -101,6 +101,18 @@ export class Game extends Scene {
         pointer: Phaser.Input.Pointer,
         objectsClicked: Phaser.GameObjects.GameObject[]
       ) => {
+        // Donate Rice Button
+        if (
+          pointer.x > 20 &&
+          pointer.x < 200 &&
+          pointer.y > 140 &&
+          pointer.y < 176
+        ) {
+          console.log("Donate Rice button clicked");
+          EventBus.emit("donate-rice", this);
+          return;
+        }
+
         this.selectedObject = objectsClicked[0] || null;
 
         if (this.selectedObject instanceof FarmPlot) {
@@ -123,7 +135,7 @@ export class Game extends Scene {
     // UI
     // Define box dimensions
     const boxWidth = 200;
-    const boxHeight = 130;
+    const boxHeight = 180;
     const boxX = 10;
     const boxY = 10;
 
@@ -139,6 +151,7 @@ export class Game extends Scene {
     background.fillRect(boxX, boxY, boxWidth, boxHeight);
     background.setDepth(15);
 
+    // Create text
     const text = this.add.text(20, 20, "", {
       fontFamily: "Arial",
       fontSize: 16,
@@ -147,7 +160,25 @@ export class Game extends Scene {
     text.setDepth(20);
     this.uiText = text;
 
-    const container = this.add.container(0, 0, [border, background, text]);
+    // Create Donate Rice button
+    const button = this.add.graphics();
+    button.lineStyle(2, 0x000000);
+    button.strokeRoundedRect(20, 140, 180, 36, 4);
+    button.fillStyle(0xaaa, 1);
+    button.setDepth(20);
+    const buttonText = this.add.text(60, 148, "Donate Rice", {
+      fontFamily: "Arial",
+      fontSize: 16,
+      color: "#000000",
+    });
+
+    const container = this.add.container(0, 0, [
+      border,
+      background,
+      text,
+      button,
+      buttonText,
+    ]);
     container.setScrollFactor(0);
     container.setDepth(20);
 
