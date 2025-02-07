@@ -102,7 +102,7 @@ export const PublisherView = () => {
     };
     const { signature } = await signMessage({ message }, { uiOptions });
 
-    const { hash } = await fetch("/api/campaigns", {
+    const response = await fetch("/api/campaigns", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +113,12 @@ export const PublisherView = () => {
         address,
       }),
     }).then((res) => res.json());
-    router.push(`/transactions/${hash}`);
+    if (response.error) {
+      alert(response.error);
+      return;
+    } else if (response.hash) {
+      router.push(`/transactions/${response.hash}`);
+    }
   };
 
   if (!authenticated) {
