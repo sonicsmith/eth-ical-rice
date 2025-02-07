@@ -231,8 +231,12 @@ export const GameView = () => {
           const plantNumber = farmPlot.plantNumber!;
           const plantName = PLANT_TYPES[plantNumber];
           const minutesToGo = Math.round(farmPlot.getTimeTillHarvest() / 60);
-          const display =
+          const hoursToGo = Math.round(minutesToGo / 60);
+          let display =
             minutesToGo < 1 ? "less than a minute" : `${minutesToGo} minutes`;
+          if (hoursToGo > 0) {
+            display = `${hoursToGo} hours`;
+          }
           toast({
             title: getCapitalized(plantName),
             description: `${display} till harvest`,

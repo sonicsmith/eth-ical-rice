@@ -21,6 +21,7 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
     this.plant?.destroy();
     this.setTint(Phaser.Display.Color.GetColor(255, 255, 255));
     this.plantedAt = time;
+    this.plantNumber = 0;
     if (time > 0) {
       this.plantNumber = plantNumber;
       const currentTime = Date.now() / 1000;
@@ -41,7 +42,7 @@ export class FarmPlot extends Phaser.GameObjects.Sprite {
     const currentTime = Date.now() / 1000;
     const plantGrowTime =
       this.plantNumber === 2 ? RICE_GROWTH_TIME : PLANT_GROWTH_TIME;
-    const growTime = Math.min(currentTime - this.plantedAt, plantGrowTime);
-    return PLANT_GROWTH_TIME - growTime;
+    const growthSoFar = Math.min(currentTime - this.plantedAt, plantGrowTime);
+    return plantGrowTime - growthSoFar;
   }
 }
