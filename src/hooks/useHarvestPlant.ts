@@ -46,7 +46,7 @@ export const useHarvestPlant = () => {
       }).then((res) => res.json());
       toast({
         title: getCapitalized(plantName),
-        description: `You harvested your ${plantName}!`,
+        description: `Your ${plantName} has been harvested!`,
       });
       return response.hash;
     },
