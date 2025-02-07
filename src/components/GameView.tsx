@@ -20,6 +20,7 @@ import { useGiveToAgent } from "@/hooks/useGiveToAgent";
 import { useDonateRice } from "@/hooks/useDonateRice";
 import { useRiceSeedCount } from "@/hooks/useRiceSeedCount";
 import { useHarvestPlant } from "@/hooks/useHarvestPlant";
+import { useScript } from "@/hooks/useScript";
 
 const defaultGameState = {
   seeds: {
@@ -190,32 +191,26 @@ export const GameView = () => {
     }
   }, [riceSeedCount, gameScene]);
 
-  // Game Scene Started
+  const script = useScript();
+
+  // Update Script
   useEffect(() => {
-    if (gameScene) {
-      console.log("Game scene started", gameScene);
+    if (script && gameScene) {
+      console.log("Setting today's script", script);
+      gameScene.setTodaysScript(script);
     }
-  }, [gameScene]);
+  }, [gameScene, script]);
 
   // Run on start
   const currentScene = (scene: Phaser.Scene) => {
     console.log("Current scene", !!scene);
-    const _gameScene = scene as Game;
-
     // TODO: Handle this better
     if (!scene) return;
     if (!address) return;
 
+    const _gameScene = scene as Game;
     setGameScene(_gameScene);
-
     _gameScene.playersAddress = address;
-
-    // Get today's script
-    fetch("/api/script")
-      .then((res) => res.json())
-      .then((response: Script) => {
-        _gameScene.setTodaysScript(response);
-      });
 
     // Listen for farm-plot-selected
     EventBus.on("farm-plot-selected", async (scene: Game) => {
