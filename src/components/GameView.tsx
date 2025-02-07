@@ -101,7 +101,7 @@ export const GameView = () => {
         }
       }
     },
-    [plantSeed, gameScene]
+    [plantSeed, gameScene, selectedFarmPlot]
   );
 
   const harvestPlant = useHarvestPlant();
