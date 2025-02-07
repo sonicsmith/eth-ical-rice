@@ -1,29 +1,17 @@
-import { MINUTE, PLANT_TYPES } from "@/constants";
+import { PLANT_TYPES } from "@/constants";
+import { getVerifiedRequest } from "@/utils/getVerifiedRequest";
 import { plantAtFarmPlot } from "@/utils/plantAtFarmPlot";
-import { getBasePublicClient } from "@/utils/viem";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-  const { address, signature, message } = await request.json();
+  const verifiedRequest = await getVerifiedRequest(request);
 
-  if (!address || !signature || !message) {
-    return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
+  if (verifiedRequest.error) {
+    return NextResponse.json({ error: verifiedRequest.error }, { status: 400 });
   }
-  const publicClient = getBasePublicClient();
-  const valid = await publicClient.verifyMessage({
-    address,
-    message,
-    signature,
-  });
-  if (!valid) {
-    return NextResponse.json({ error: "Invalid Signature" }, { status: 400 });
-  }
-  const { plantType, timestamp, plotIndex } = JSON.parse(message);
 
-  const timeSinceSignature = Date.now() / 1000 - timestamp;
-  if (timeSinceSignature > MINUTE) {
-    return NextResponse.json({ error: "Expired Signature" }, { status: 400 });
-  }
+  const { address, message } = verifiedRequest;
+  const { plantType, plotIndex } = JSON.parse(message);
 
   const plantNumber = PLANT_TYPES.indexOf(plantType);
   const hash = await plantAtFarmPlot({
