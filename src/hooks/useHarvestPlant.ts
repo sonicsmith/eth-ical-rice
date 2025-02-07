@@ -24,7 +24,15 @@ export const useHarvestPlant = () => {
         description: `Harvest ${plantName}?`,
         buttonText: `OK`,
       };
-      const { signature } = await signMessage({ message }, { uiOptions });
+      let signResponse;
+      try {
+        signResponse = await signMessage({ message }, { uiOptions });
+        farmPlot.setPlant(0, 0);
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+      const { signature } = signResponse;
       const response = await fetch("/api/harvest", {
         method: "POST",
         headers: {

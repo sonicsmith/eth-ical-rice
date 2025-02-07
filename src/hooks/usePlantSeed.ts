@@ -4,29 +4,37 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useCallback } from "react";
 import { useAccount } from "wagmi";
 import { useToast } from "./use-toast";
+import { PLANT_TYPES } from "@/constants";
 
-export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
+export const usePlantSeed = () => {
   const { address } = useAccount();
   const { signMessage } = usePrivy();
   const { toast } = useToast();
 
   const plantSeed = useCallback(
-    async (plantType: PlantType) => {
-      if (!selectedFarmPlot) {
-        throw new Error("No farm plot selected");
-      }
+    async (farmPlot: FarmPlot, plantType: PlantType) => {
       const timestamp = Math.floor(Date.now() / 1000);
       const message = JSON.stringify({
         plantType,
         timestamp,
-        plotIndex: selectedFarmPlot.index,
+        plotIndex: farmPlot.index,
       });
       const uiOptions = {
         title: "Confirm",
         description: `Plant ${plantType} seed?`,
         buttonText: `OK`,
       };
-      const { signature } = await signMessage({ message }, { uiOptions });
+      let signResponse;
+      try {
+        signResponse = await signMessage({ message }, { uiOptions });
+        const plantTypeIndex = PLANT_TYPES.indexOf(plantType);
+        const plantTime = Math.floor(Date.now() / 1000);
+        farmPlot.setPlant(plantTime, plantTypeIndex);
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+      const { signature } = signResponse;
       const response = await fetch("/api/plant", {
         method: "POST",
         headers: {
@@ -44,7 +52,7 @@ export const usePlantSeed = (selectedFarmPlot: FarmPlot | null) => {
       });
       return response.hash;
     },
-    [address, signMessage, toast, selectedFarmPlot]
+    [address, signMessage, toast]
   );
 
   return plantSeed;

@@ -77,23 +77,28 @@ export const GameView = () => {
     refetchRiceSeedCount,
   ]);
 
-  const plantSeed = usePlantSeed(selectedFarmPlot);
+  const plantSeed = usePlantSeed();
   const plantSeedAndRefresh = useCallback(
     async (plantType: PlantType) => {
-      const hash = await plantSeed(plantType);
-      setTransactionHash(hash);
-      if (gameScene) {
-        gameScene.seedCount[plantType]--;
-        setGameState((oldState) => {
-          return {
-            ...oldState,
-            seeds: {
-              ...oldState.seeds,
-              [plantType]: oldState.seeds[plantType] - 1,
-            },
-          };
-        });
-        gameScene.updateUI();
+      if (!selectedFarmPlot) {
+        throw new Error("No farm plot selected");
+      }
+      const hash = await plantSeed(selectedFarmPlot, plantType);
+      if (!!hash) {
+        setTransactionHash(hash);
+        if (gameScene) {
+          gameScene.seedCount[plantType]--;
+          setGameState((oldState) => {
+            return {
+              ...oldState,
+              seeds: {
+                ...oldState.seeds,
+                [plantType]: oldState.seeds[plantType] - 1,
+              },
+            };
+          });
+          gameScene.updateUI();
+        }
       }
     },
     [plantSeed, gameScene]
@@ -102,9 +107,10 @@ export const GameView = () => {
   const harvestPlant = useHarvestPlant();
   const harvestPlantAndRefresh = useCallback(
     async (farmPlot: FarmPlot) => {
-      farmPlot.setPlant(0, 0);
       const hash = await harvestPlant(farmPlot);
-      setTransactionHash(hash);
+      if (!!hash) {
+        setTransactionHash(hash);
+      }
     },
     [harvestPlant]
   );
