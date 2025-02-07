@@ -118,11 +118,13 @@ export class Game extends Scene {
         if (this.selectedObject instanceof FarmPlot) {
           console.log("Farm plot clicked", this.selectedObject.index);
           EventBus.emit("farm-plot-selected", this);
+          return;
         }
 
         if (this.selectedObject instanceof Character) {
           console.log("Character clicked", this.selectedObject);
           EventBus.emit("character-selected", this);
+          return;
         }
 
         // Move Player
