@@ -250,24 +250,23 @@ export class Game extends Scene {
     this.agentInstructionsIndex++;
     if (currentIndex >= this.agentInstructions.length) {
       this.agentInstructionsIndex = 0;
-    } else {
-      const instructions = this.agentInstructions[currentIndex];
-      const { talker, listener, message } = instructions;
-      const talkerAgent = this.agents[talker];
-      const listenerAgent = this.agents[listener];
-      talkerAgent.talkTo(listenerAgent, message, this.updateAgents.bind(this));
-      // Get a random character who is not the talker or listener
-      const characters = agentKeys.filter(
-        (key) => key !== talker && key !== listener
-      );
-      const randomCharacter =
-        characters[Math.floor(Math.random() * characters.length)];
-      const randomDestination = {
-        x: Math.random() * this.mapLayer.width,
-        y: Math.random() * this.mapLayer.height,
-      };
-      this.agents[randomCharacter].setDestination(randomDestination);
     }
+    const instructions = this.agentInstructions[currentIndex];
+    const { talker, listener, message } = instructions;
+    const talkerAgent = this.agents[talker];
+    const listenerAgent = this.agents[listener];
+    talkerAgent.talkTo(listenerAgent, message, this.updateAgents.bind(this));
+    // Get a random character who is not the talker or listener
+    const characters = agentKeys.filter(
+      (key) => key !== talker && key !== listener
+    );
+    const randomCharacter =
+      characters[Math.floor(Math.random() * characters.length)];
+    const randomDestination = {
+      x: Math.random() * this.mapLayer.width,
+      y: Math.random() * this.mapLayer.height,
+    };
+    this.agents[randomCharacter].setDestination(randomDestination);
   }
 
   update(time: number, delta: number) {
