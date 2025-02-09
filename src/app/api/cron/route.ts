@@ -3,6 +3,8 @@ import { generateScript } from "./generateScript";
 import { pinata } from "@/utils/pinata";
 import { setScriptHash } from "@/utils/setScriptHash";
 
+export const maxDuration = 300; // 5 minutes
+
 export const GET = async (request: NextRequest) => {
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
