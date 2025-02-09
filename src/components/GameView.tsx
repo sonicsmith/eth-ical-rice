@@ -293,7 +293,7 @@ export const GameView = () => {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center pt-16">
       <PlantModal
         isOpen={isPlantModalOpen}
         setIsOpen={setIsPlantModalOpen}

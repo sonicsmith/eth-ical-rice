@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export const LoginView = () => {
-  const { ready, authenticated, login } = usePrivy();
+  const { ready, authenticated, login, logout } = usePrivy();
   // Disable login when Privy is not ready or the user is already authenticated
   const disableLogin = !ready || (ready && authenticated);
 
@@ -34,6 +34,11 @@ export const LoginView = () => {
           <Button disabled={disableLogin} onClick={login}>
             Login
           </Button>
+        </div>
+      )}
+      {authenticated && (
+        <div className="flex justify-center p-8">
+          <Button onClick={logout}>Logout</Button>
         </div>
       )}
     </div>
